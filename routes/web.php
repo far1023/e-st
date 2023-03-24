@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TesController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\VignereController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +17,27 @@ use App\Http\Controllers\TesController;
 */
 
 Route::get('/', function () {
-	return view('welcome');
+	return view('login');
 });
+Route::get('/login', function () {
+	return view('login');
+})->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::get('/tes', [TesController::class, 'index']);
+
+Route::group(['middleware' => ['auth']], function () {
+	Route::view('/beranda', 'back/content/beranda', [
+		"title" => "Beranda",
+		"css"	=> [],
+		"js"	=> NULL
+	]);
+
+	Route::view('/tes-vignere', 'back/content/tes/vignere', [
+		"title" => "Tes",
+		"css"	=> [],
+		"js"	=> 'vignerejs'
+	]);
+	Route::post('/tes-vignere/cipher', [VignereController::class, 'cipher']);
+});
