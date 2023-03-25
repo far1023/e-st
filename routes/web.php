@@ -3,18 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TesController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GantiRugiController;
+use App\Http\Controllers\KepemilikanTanahController;
 use App\Http\Controllers\VignereController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 Route::get('/', function () {
 	return view('login');
@@ -37,7 +28,23 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::view('/tes-vignere', 'back/content/tes/vignere', [
 		"title" => "Tes",
 		"css"	=> [],
-		"js"	=> 'vignerejs'
+		"js"	=> 'tes/vignerejs'
 	]);
 	Route::post('/tes-vignere/cipher', [VignereController::class, 'cipher']);
+
+	Route::prefix('formulir')->group(function () {
+		Route::get('/ganti-rugi', [GantiRugiController::class, 'create'])->name('ganti-rugi.create');
+		Route::post('/ganti-rugi', [GantiRugiController::class, 'store'])->name('ganti-rugi.store');
+		Route::get('/ganti-rugi/{id}/edit', [GantiRugiController::class, 'edit'])->name('ganti-rugi.edit');
+		Route::put('/ganti-rugi/{id}/update', [GantiRugiController::class, 'update'])->name('ganti-rugi.update');
+	});
+
+	Route::prefix('data')->group(function () {
+		Route::get('/ganti-rugi', [GantiRugiController::class, 'data'])->name('ganti-rugi.index');
+		Route::get('/ganti-rugi/dttable', [GantiRugiController::class, 'dttable']);
+		Route::get('/ganti-rugi/{id}', [GantiRugiController::class, 'show'])->name('ganti-rugi.show');
+		Route::delete('/ganti-rugi/{id}', [GantiRugiController::class, 'destroy'])->name('ganti-rugi.destroy');
+
+		Route::resource('/kepemilikan-tanah', KepemilikanTanahController::class);
+	});
 });
