@@ -4,9 +4,10 @@ namespace app\Helpers;
 
 class VignereCipher
 {
-	public static function encrypt($key, $text)
+	public static function encrypt($text, $key = NULL)
 	{
 		// change key to lowercase for simplicity
+		($key == NULL) ? $key = env('VIGNERE_KEY') : $key = $key;
 		$key = strtolower($key);
 
 		// intialize variables
@@ -40,9 +41,10 @@ class VignereCipher
 		return $text;
 	}
 
-	public static function decrypt($key, $text)
+	public static function decrypt($text, $key = NULL)
 	{
 		// change key to lowercase for simplicity
+		($key == NULL) ? $key = env('VIGNERE_KEY') : $key = $key;
 		$key = strtolower($key);
 
 		// intialize variables
