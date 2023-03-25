@@ -36,9 +36,9 @@ class VignereController extends Controller
 		}
 
 		if ($request->method == 'Encrypt') {
-			$result['cipher'] = VignereCip::encrypt($request->key, $request->text);
+			$result['cipher'] = VignereCip::encrypt($request->text, $request->key);
 		} else {
-			$result['cipher'] = VignereCip::decrypt($request->key, $request->text);
+			$result['cipher'] = VignereCip::decrypt($request->text, $request->key);
 		}
 
 		return response()->json(
