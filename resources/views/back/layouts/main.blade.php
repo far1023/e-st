@@ -24,7 +24,7 @@
     @include('back.layouts.partials.navbar')
     @include('back.layouts.partials.sidebar')
 
-    <div class="content-wrapper">
+    <div class="content-wrapper pb-5">
       @yield('content')
     </div>
 

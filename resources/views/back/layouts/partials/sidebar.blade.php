@@ -7,7 +7,7 @@
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <li class="nav-item">
-          <a href="#" class="nav-link active">
+          <a href="{{ url('beranda') }}" class="nav-link active">
             <i class="nav-icon las la-th"></i>
             <p>
               Beranda
@@ -15,7 +15,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="javascript:void(0)" class="nav-link">
             <i class="nav-icon las la-tachometer-alt"></i>
             <p>
               Form Surat
@@ -24,25 +24,25 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ url('formulir/ganti-rugi') }}" class="nav-link">
                 <i class="las la-circle nav-icon"></i>
                 <p>SPGR</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ url('formulir/kepemilikan-tanah') }}" class="nav-link">
                 <i class="las la-circle nav-icon"></i>
                 <p>SKT</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ url('formulir/peta-situasi-tanah') }}" class="nav-link">
                 <i class="las la-circle nav-icon"></i>
                 <p>Peta Situasi Tanah</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ url('formulir/surat-situasi-tanah') }}" class="nav-link">
                 <i class="las la-circle nav-icon"></i>
                 <p>Surat Situasi Tanah</p>
               </a>
@@ -50,7 +50,7 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="javascript:void(0)" class="nav-link">
             <i class="nav-icon las la-tachometer-alt"></i>
             <p>
               Data Surat
@@ -59,25 +59,25 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ url('data/ganti-rugi') }}" class="nav-link">
                 <i class="las la-circle nav-icon"></i>
                 <p>SPGR</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ url('data/kepemilikan-tanah') }}" class="nav-link">
                 <i class="las la-circle nav-icon"></i>
                 <p>SKT</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ url('data/peta-situasi-tanah') }}" class="nav-link">
                 <i class="las la-circle nav-icon"></i>
                 <p>Peta Situasi Tanah</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ url('data/surat-situasi-tanah') }}" class="nav-link">
                 <i class="las la-circle nav-icon"></i>
                 <p>Surat Situasi Tanah</p>
               </a>
