@@ -157,7 +157,7 @@ class GantiRugiController extends Controller
 			[
 				"no_reg.required" => "wajib diisi",
 				"no_reg.unique" => "nomor regis sudah terdaftar",
-				"no_ref.date" => "format tanggal tidak cocok",
+				"tanggal_ref.date" => "format tanggal tidak cocok",
 				"nama_pihak_pertama.required" => "wajib diisi",
 				"tempat_lahir_pihak_pertama.required" => "wajib diisi",
 				"tanggal_lahir_pihak_pertama.required" => "wajib diisi",
@@ -284,7 +284,7 @@ class GantiRugiController extends Controller
 			[
 				"no_reg.required" => "wajib diisi",
 				"no_reg.unique" => "nomor regis sudah terdaftar",
-				"no_ref.date" => "format tanggal tidak cocok",
+				"tanggal_ref.date" => "format tanggal tidak cocok",
 				"nama_pihak_pertama.required" => "wajib diisi",
 				"tempat_lahir_pihak_pertama.required" => "wajib diisi",
 				"tanggal_lahir_pihak_pertama.required" => "wajib diisi",
