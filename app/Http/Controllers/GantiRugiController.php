@@ -128,6 +128,7 @@ class GantiRugiController extends Controller
 			$request->all(),
 			[
 				"no_reg" => ["required", "unique:spgrs"],
+				"tanggal_ref" => ["nullable", "date"],
 				"nama_pihak_pertama" => ["required"],
 				"tempat_lahir_pihak_pertama" => ["required"],
 				"tanggal_lahir_pihak_pertama" => ["required", "date"],
@@ -143,6 +144,7 @@ class GantiRugiController extends Controller
 				"alamat_tanah" => ["required"],
 				"luas_tanah" => ["required", "integer"],
 				"besaran" => ["required", "integer"],
+				"terbilang" => ["required"],
 				"batas_utara" => ["required"],
 				"ukuran_utara" => ["required", "integer"],
 				"batas_selatan" => ["required"],
@@ -155,6 +157,7 @@ class GantiRugiController extends Controller
 			[
 				"no_reg.required" => "wajib diisi",
 				"no_reg.unique" => "nomor regis sudah terdaftar",
+				"no_ref.date" => "format tanggal tidak cocok",
 				"nama_pihak_pertama.required" => "wajib diisi",
 				"tempat_lahir_pihak_pertama.required" => "wajib diisi",
 				"tanggal_lahir_pihak_pertama.required" => "wajib diisi",
@@ -174,6 +177,7 @@ class GantiRugiController extends Controller
 				"luas_tanah.integer" => "isikan hanya dengan bilangan bulat",
 				"besaran.required" => "wajib diisi",
 				"besaran.integer" => "isikan hanya dengan bilangan bulat",
+				"terbilang.required" => "wajib diisi",
 				"batas_utara.required" => "wajib diisi",
 				"ukuran_utara.required" => "wajib diisi",
 				"ukuran_utara.integer" => "isikan hanya dengan bilangan bulat",
@@ -236,7 +240,7 @@ class GantiRugiController extends Controller
 
 		return view('back.content.formulir.formspgr', [
 			"no_reg" => VignereCip::decrypt($no_reg),
-			"title" => "Formulir SPGR",
+			"title" => "Formulir SPGR - Edit",
 			"css"	=> ['stepper', 'datepicker'],
 			"js"	=> 'formulir/editspgrjs'
 		]);
@@ -251,6 +255,7 @@ class GantiRugiController extends Controller
 			$request->all(),
 			[
 				"no_reg" => ["required", "unique:spgrs,no_reg," . $id],
+				"tanggal_ref" => ["nullable", "date"],
 				"nama_pihak_pertama" => ["required"],
 				"tempat_lahir_pihak_pertama" => ["required"],
 				"tanggal_lahir_pihak_pertama" => ["required", "date"],
@@ -266,6 +271,7 @@ class GantiRugiController extends Controller
 				"alamat_tanah" => ["required"],
 				"luas_tanah" => ["required", "integer"],
 				"besaran" => ["required", "integer"],
+				"terbilang" => ["required"],
 				"batas_utara" => ["required"],
 				"ukuran_utara" => ["required", "integer"],
 				"batas_selatan" => ["required"],
@@ -278,6 +284,7 @@ class GantiRugiController extends Controller
 			[
 				"no_reg.required" => "wajib diisi",
 				"no_reg.unique" => "nomor regis sudah terdaftar",
+				"no_ref.date" => "format tanggal tidak cocok",
 				"nama_pihak_pertama.required" => "wajib diisi",
 				"tempat_lahir_pihak_pertama.required" => "wajib diisi",
 				"tanggal_lahir_pihak_pertama.required" => "wajib diisi",
@@ -297,6 +304,7 @@ class GantiRugiController extends Controller
 				"luas_tanah.integer" => "isikan hanya dengan bilangan bulat",
 				"besaran.required" => "wajib diisi",
 				"besaran.integer" => "isikan hanya dengan bilangan bulat",
+				"terbilang.required" => "wajib diisi",
 				"batas_utara.required" => "wajib diisi",
 				"ukuran_utara.required" => "wajib diisi",
 				"ukuran_utara.integer" => "isikan hanya dengan bilangan bulat",

@@ -5,11 +5,7 @@
 <script src="{{ asset('js/terbilang.js') }}"></script>
 
 <script>
-  $('#tanggal_lahir_pihak_pertama').datetimepicker({
-    format: "YYYY-MM-DD"
-  });
-
-  $('#tanggal_lahir_pihak_kedua').datetimepicker({
+  $('.datetimepicker-input').datetimepicker({
     format: "YYYY-MM-DD"
   });
 

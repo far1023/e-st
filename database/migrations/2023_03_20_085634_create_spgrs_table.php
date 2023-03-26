@@ -16,6 +16,8 @@ return new class extends Migration
 		Schema::create('spgrs', function (Blueprint $table) {
 			$table->id();
 			$table->string('no_reg')->unique();
+			$table->string('no_ref')->nullable();
+			$table->date('tanggal_ref')->nullable();
 			$table->string('nama_pihak_pertama');
 			$table->string('tempat_lahir_pihak_pertama');
 			$table->date('tanggal_lahir_pihak_pertama');
@@ -31,6 +33,7 @@ return new class extends Migration
 			$table->string('alamat_tanah');
 			$table->integer('luas_tanah');
 			$table->integer('besaran');
+			$table->string('terbilang');
 			$table->string('batas_utara');
 			$table->integer('ukuran_utara');
 			$table->string('batas_selatan');

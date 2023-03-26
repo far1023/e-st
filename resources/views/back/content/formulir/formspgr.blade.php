@@ -16,7 +16,7 @@
       <div class="card">
         <div class="card-header">Buat Surat Pernyataan Ganti Rugi</div>
         <div class="card-body">
-          <form id="formspgr">
+          <form id="formspgr" class="px-lg-5">
             @csrf
             {{ request()->route('id') ? method_field('PUT') : '' }}
             <div class="input-group">
@@ -26,6 +26,24 @@
               <input type="text" class="form-control" name="no_reg" id="no_reg" value="{{ $no_reg }}">
             </div>
             <small class="text-danger err-msg" id="no_reg_error"></small>
+            <div class="row my-4">
+              <div class="col-sm-6">
+                <label for="">Dasar Surat Tanah</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">No.Reg</span>
+                  </div>
+                  <input type="text" class="form-control" name="no_ref" id="no_ref">
+                </div>
+                <small class="text-danger err-msg" id="no_ref_error"></small>
+              </div>
+              <div class="col-sm-6">
+                <label for="tanggal_ref">Tanggal</label>
+                <input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#tanggal_ref" id="tanggal_ref" name="tanggal_ref"
+                  autocomplete="off">
+                <small class="text-danger err-msg" id="tanggal_ref_error"></small>
+              </div>
+            </div>
             <div class="bs-stepper">
               <div class="bs-stepper-header" role="tablist">
                 <div class="step" data-target="#pihak-pertama">
@@ -49,7 +67,7 @@
                   </button>
                 </div>
               </div>
-              <div class="bs-stepper-content px-lg-5 pt-4">
+              <div class="bs-stepper-content pt-4">
                 <div id="pihak-pertama" class="content" role="tabpanel" aria-labelledby="pihak-pertama-trigger">
                   <h6>Yang menyatakan selanjutnya adalah <b>PIHAK PERTAMA</b></h6>
                   <div class="form-group">
@@ -68,7 +86,7 @@
                         <label for="tanggal_lahir_pihak_pertama">Tanggal Lahir</label>
                         <input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#tanggal_lahir_pihak_pertama"
                           id="tanggal_lahir_pihak_pertama" name="tanggal_lahir_pihak_pertama" autocomplete="off">
-                        <small class="text-danger err-msg" id="tempat_lahir_pihak_pertama_error"></small>
+                        <small class="text-danger err-msg" id="tanggal_lahir_pihak_pertama_error"></small>
                       </div>
                     </div>
                   </div>
@@ -88,7 +106,7 @@
                     <small class="text-danger err-msg" id="alamat_pihak_pertama_error"></small>
                   </div>
                   <div class="pt-4">
-                    <button type="button" class="btn btn-primary float-right mb-3" onclick="stepper.next()">Lanjutkan</button>
+                    <button type="button" class="btn btn-outline-primary float-right mb-3" onclick="stepper.next()">Selanjutnya <i class="las la-chevron-right"></i></button>
                   </div>
                 </div>
                 <div id="pihak-kedua" class="content" role="tabpanel" aria-labelledby="pihak-kedua-trigger">
@@ -109,7 +127,7 @@
                         <label for="tanggal_lahir_pihak_kedua">Tanggal Lahir</label>
                         <input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#tanggal_lahir_pihak_kedua"
                           id="tanggal_lahir_pihak_kedua" name="tanggal_lahir_pihak_kedua" autocomplete="off">
-                        <small class="text-danger err-msg" id="tempat_lahir_pihak_pkeduaerror"></small>
+                        <small class="text-danger err-msg" id="tanggal_lahir_pihak_kedua_error"></small>
                       </div>
                     </div>
                   </div>
@@ -129,8 +147,8 @@
                     <small class="text-danger err-msg" id="alamat_pihak_kedua_error"></small>
                   </div>
                   <div class="pt-4">
-                    <button type="button" class="btn btn-secondary" onclick="stepper.previous()">Sebelumnya</button>
-                    <button type="button" class="btn btn-primary float-right mb-3" onclick="stepper.next()">Lanjutkan</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="stepper.previous()"><i class="las la-chevron-left"></i> Sebelumnya</button>
+                    <button type="button" class="btn btn-outline-primary float-right mb-3" onclick="stepper.next()">Selanjutnya <i class="las la-chevron-right"></i></button>
                   </div>
                 </div>
                 <div id="data-pendukung" class="content" role="tabpanel" aria-labelledby="data-pendukung-trigger">
@@ -168,7 +186,7 @@
                       </div>
                       <div class="col-sm-8">
                         <label for="terbilang">Terbilang</label>
-                        <input type="text" class="form-control bg-white" name="terbilang" id="terbilang" disabled>
+                        <input type="text" class="form-control" name="terbilang" id="terbilang">
                         <small class="text-danger err-msg" id="terbilang_error"></small>
                       </div>
                     </div>
@@ -250,7 +268,7 @@
                     </div>
                   </div>
                   <div class="pt-4">
-                    <button type="button" class="btn btn-secondary" onclick="stepper.previous()">Sebelumnya</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="stepper.previous()"><i class="las la-chevron-left"></i> Sebelumnya</button>
                     <button type="submit" class="btn btn-primary float-right px-4" id="btn-save">Simpan data</button>
                   </div>
                 </div>
