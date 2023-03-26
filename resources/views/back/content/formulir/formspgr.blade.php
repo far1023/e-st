@@ -162,7 +162,7 @@
                       <div class="col-sm-2">
                         <label for="luas_tanah">Luas Tanah</label>
                         <div class="input-group">
-                          <input type="number" min="0" class="form-control" name="luas_tanah" id="luas_tanah">
+                          <input type="number" min="1" class="form-control" name="luas_tanah" id="luas_tanah">
                           <div class="input-group-append">
                             <span class="input-group-text">m&#178;</span>
                           </div>
@@ -179,7 +179,7 @@
                           <div class="input-group-prepend">
                             <span class="input-group-text">Rp</span>
                           </div>
-                          <input type="text" min="0" class="form-control" name="besaran" id="besaran"
+                          <input type="text" min="1" class="form-control" name="besaran" id="besaran"
                             data-inputmask="'alias': 'numeric', 'groupSeparator': '.', 'autoGroup': true, 'digits': 0, 'digitsOptional': false, 'placeholder': '0'">
                         </div>
                         <small class="text-danger err-msg" id="besaran_error"></small>
@@ -201,7 +201,7 @@
                       <div class="col-sm-2">
                         <label for="ukuran_utara">Ukuran</label>
                         <div class="input-group">
-                          <input type="number" min="0" class="form-control" name="ukuran_utara" id="ukuran_utara">
+                          <input type="number" min="1" class="form-control" name="ukuran_utara" id="ukuran_utara">
                           <div class="input-group-append">
                             <span class="input-group-text">m</span>
                           </div>
@@ -220,7 +220,7 @@
                       <div class="col-sm-2">
                         <label for="ukuran_selatan">Ukuran</label>
                         <div class="input-group">
-                          <input type="number" min="0" class="form-control" name="ukuran_selatan" id="ukuran_selatan">
+                          <input type="number" min="1" class="form-control" name="ukuran_selatan" id="ukuran_selatan">
                           <div class="input-group-append">
                             <span class="input-group-text">m</span>
                           </div>
@@ -239,7 +239,7 @@
                       <div class="col-sm-2">
                         <label for="ukuran_barat">Ukuran</label>
                         <div class="input-group">
-                          <input type="number" min="0" class="form-control" name="ukuran_barat" id="ukuran_barat">
+                          <input type="number" min="1" class="form-control" name="ukuran_barat" id="ukuran_barat">
                           <div class="input-group-append">
                             <span class="input-group-text">m</span>
                           </div>
@@ -258,7 +258,7 @@
                       <div class="col-sm-2">
                         <label for="ukuran_timur">Ukuran</label>
                         <div class="input-group">
-                          <input type="number" min="0" class="form-control" name="ukuran_timur" id="ukuran_timur">
+                          <input type="number" min="1" class="form-control" name="ukuran_timur" id="ukuran_timur">
                           <div class="input-group-append">
                             <span class="input-group-text">m</span>
                           </div>
