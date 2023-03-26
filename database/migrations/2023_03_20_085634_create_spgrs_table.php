@@ -42,6 +42,7 @@ return new class extends Migration
 			$table->integer('ukuran_barat');
 			$table->string('batas_timur');
 			$table->integer('ukuran_timur');
+			$table->unsignedBigInteger('approved_by')->nullable();
 			$table->timestamps();
 		});
 	}
