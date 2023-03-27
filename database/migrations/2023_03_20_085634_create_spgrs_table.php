@@ -16,6 +16,7 @@ return new class extends Migration
 		Schema::create('spgrs', function (Blueprint $table) {
 			$table->id();
 			$table->string('no_reg')->unique();
+			$table->date('tanggal_reg');
 			$table->string('no_ref')->nullable();
 			$table->date('tanggal_ref')->nullable();
 			$table->string('nama_pihak_pertama');
@@ -42,7 +43,9 @@ return new class extends Migration
 			$table->integer('ukuran_barat');
 			$table->string('batas_timur');
 			$table->integer('ukuran_timur');
-			$table->unsignedBigInteger('approved_by')->nullable();
+			$table->string('mengetahui');
+			$table->date('checked_at')->nullable();
+			$table->date('approved_at')->nullable();
 			$table->timestamps();
 		});
 	}
