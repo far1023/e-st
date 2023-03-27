@@ -19,33 +19,8 @@
           <form id="formspgr" class="px-lg-5">
             @csrf
             {{ request()->route('id') ? method_field('PUT') : '' }}
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text">No.Reg</span>
-              </div>
-              <input type="text" class="form-control" name="no_reg" id="no_reg" value="{{ $no_reg }}">
-            </div>
-            <small class="text-danger err-msg" id="no_reg_error"></small>
-            <div class="row my-4">
-              <div class="col-sm-6">
-                <label for="">Dasar Surat Tanah</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text">No.Reg</span>
-                  </div>
-                  <input type="text" class="form-control" name="no_ref" id="no_ref">
-                </div>
-                <small class="text-danger err-msg" id="no_ref_error"></small>
-              </div>
-              <div class="col-sm-6">
-                <label for="tanggal_ref">Tanggal</label>
-                <input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#tanggal_ref" id="tanggal_ref" name="tanggal_ref"
-                  autocomplete="off">
-                <small class="text-danger err-msg" id="tanggal_ref_error"></small>
-              </div>
-            </div>
             <div class="bs-stepper">
-              <div class="bs-stepper-header" role="tablist">
+              <div class="bs-stepper-header d-none" role="tablist">
                 <div class="step" data-target="#pihak-pertama">
                   <button type="button" class="step-trigger" role="tab" aria-controls="pihak-pertama" id="pihak-pertama-trigger">
                     <span class="bs-stepper-circle">1</span>
@@ -66,10 +41,17 @@
                     <span class="bs-stepper-label">Data Pendukung</span>
                   </button>
                 </div>
+                <div class="line"></div>
+                <div class="step" data-target="#diketahui">
+                  <button type="button" class="step-trigger" role="tab" aria-controls="diketahui" id="diketahui-trigger">
+                    <span class="bs-stepper-circle">4</span>
+                    <span class="bs-stepper-label">Yang Mengetahui</span>
+                  </button>
+                </div>
               </div>
               <div class="bs-stepper-content pt-4">
                 <div id="pihak-pertama" class="content" role="tabpanel" aria-labelledby="pihak-pertama-trigger">
-                  <h6>Yang menyatakan selanjutnya adalah <b>PIHAK PERTAMA</b></h6>
+                  <p>Yang menyatakan selanjutnya adalah <b>PIHAK PERTAMA</b></p>
                   <div class="form-group">
                     <label for="nama_pihak_pertama">Nama Lengkap</label>
                     <input type="text" class="form-control" name="nama_pihak_pertama" id="nama_pihak_pertama" placeholder="">
@@ -110,7 +92,7 @@
                   </div>
                 </div>
                 <div id="pihak-kedua" class="content" role="tabpanel" aria-labelledby="pihak-kedua-trigger">
-                  <h6>Yang memberikan ganti rugi selanjutnya adalah <b>PIHAK KEDUA</b></h6>
+                  <p>Yang memberikan ganti rugi selanjutnya adalah <b>PIHAK KEDUA</b></p>
                   <div class="form-group">
                     <label for="nama_pihak_kedua">Nama Lengkap</label>
                     <input type="text" class="form-control" name="nama_pihak_kedua" id="nama_pihak_kedua" placeholder="">
@@ -171,6 +153,26 @@
                       </div>
                     </div>
                   </div>
+                  <div class="form-grup">
+                    <div class="row my-4">
+                      <div class="col-sm-6">
+                        <label for="">Dasar Surat Tanah</label>
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">No.Reg</span>
+                          </div>
+                          <input type="text" class="form-control" name="no_ref" id="no_ref">
+                        </div>
+                        <small class="text-danger err-msg" id="no_ref_error"></small>
+                      </div>
+                      <div class="col-sm-6">
+                        <label for="tanggal_ref">Tanggal</label>
+                        <input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#tanggal_ref" id="tanggal_ref"
+                          name="tanggal_ref" autocomplete="off">
+                        <small class="text-danger err-msg" id="tanggal_ref_error"></small>
+                      </div>
+                    </div>
+                  </div>
                   <div class="form-group">
                     <div class="row">
                       <div class="col-sm-4">
@@ -191,6 +193,7 @@
                       </div>
                     </div>
                   </div>
+                  <p class="pt-4">Batas-batas sempadan</p>
                   <div class="form-group">
                     <div class="row">
                       <div class="col-sm-5">
@@ -266,6 +269,22 @@
                         <small class="text-danger err-msg" id="ukuran_timur_error"></small>
                       </div>
                     </div>
+                  </div>
+                  <div class="pt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="stepper.previous()"><i class="las la-chevron-left"></i> Sebelumnya</button>
+                    <button type="button" class="btn btn-outline-primary float-right mb-3" onclick="stepper.next()">Selanjutnya <i class="las la-chevron-right"></i></button>
+                  </div>
+                </div>
+                <div id="diketahui" class="content" role="tabpanel" aria-labelledby="diketahui-trigger">
+                  <p>Mengetahui</p>
+                  <div class="form-group">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">No.Reg</span>
+                      </div>
+                      <input type="text" class="form-control" name="no_reg" id="no_reg" value="{{ $no_reg }}">
+                    </div>
+                    <small class="text-danger err-msg" id="no_reg_error"></small>
                   </div>
                   <div class="pt-4">
                     <button type="button" class="btn btn-outline-secondary" onclick="stepper.previous()"><i class="las la-chevron-left"></i> Sebelumnya</button>
