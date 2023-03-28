@@ -8,7 +8,6 @@
           <h1 class="m-0">{{ $title }}</h1>
         </div>
         <div class="col-sm-6">
-          <button type="button" id="add" class="btn btn-sm btn-outline-primary float-sm-right">Tambah pengguna</button>
         </div>
       </div>
     </div>
@@ -17,6 +16,9 @@
   <div class="content">
     <div class="container-fluid">
       <div class="card">
+        <div class="card-header">
+          <button type="button" id="add" class="btn btn-sm btn-outline-primary float-sm-right">Tambah pengguna</button>
+        </div>
         <div class="card-body">
           <div class="table-responsive py-3">
             <table class="table table-striped table-hover dttables" id="dt_user">
