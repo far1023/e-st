@@ -5,6 +5,8 @@ use App\Http\Controllers\TesController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GantiRugiController;
 use App\Http\Controllers\KepemilikanTanahController;
+use App\Http\Controllers\PetaSituasiTanahController;
+use App\Http\Controllers\SuratSituasiTanahController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VignereController;
 
@@ -37,26 +39,46 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('/tes-vignere/cipher', [VignereController::class, 'cipher']);
 
 	Route::prefix('formulir')->group(function () {
-		Route::get('/ganti-rugi', [GantiRugiController::class, 'create'])->name('ganti-rugi.create');
-		Route::post('/ganti-rugi', [GantiRugiController::class, 'store'])->name('ganti-rugi.store');
-		Route::get('/ganti-rugi/{id}/edit', [GantiRugiController::class, 'edit'])->name('ganti-rugi.edit');
-		Route::put('/ganti-rugi/{id}/update', [GantiRugiController::class, 'update'])->name('ganti-rugi.update');
+		Route::get('/ganti-rugi', [GantiRugiController::class, 'create'])->name('gantiRugi.create');
+		Route::post('/ganti-rugi', [GantiRugiController::class, 'store'])->name('gantiRugi.store');
+		Route::get('/ganti-rugi/{id}/edit', [GantiRugiController::class, 'edit'])->name('gantiRugi.edit');
+		Route::put('/ganti-rugi/{id}/update', [GantiRugiController::class, 'update'])->name('gantiRugi.update');
 
-		Route::get('/kepemilikan-tanah', [KepemilikanTanahController::class, 'create'])->name('kepemilikan-tanah.create');
-		Route::post('/kepemilikan-tanah', [KepemilikanTanahController::class, 'store'])->name('kepemilikan-tanah.store');
-		Route::get('/kepemilikan-tanah/{id}/edit', [KepemilikanTanahController::class, 'edit'])->name('kepemilikan-tanah.edit');
-		Route::put('/kepemilikan-tanah/{id}/update', [KepemilikanTanahController::class, 'update'])->name('kepemilikan-tanah.update');
+		Route::get('/kepemilikan-tanah', [KepemilikanTanahController::class, 'create'])->name('kepemilikanTanah.create');
+		Route::post('/kepemilikan-tanah', [KepemilikanTanahController::class, 'store'])->name('kepemilikanTanah.store');
+		Route::get('/kepemilikan-tanah/{id}/edit', [KepemilikanTanahController::class, 'edit'])->name('kepemilikanTanah.edit');
+		Route::put('/kepemilikan-tanah/{id}/update', [KepemilikanTanahController::class, 'update'])->name('kepemilikanTanah.update');
+
+		Route::get('/peta-situasi-tanah', [PetaSituasiTanahController::class, 'create'])->name('petaSituasi.create');
+		Route::post('/peta-situasi-tanah', [PetaSituasiTanahController::class, 'store'])->name('petaSituasi.store');
+		Route::get('/peta-situasi-tanah/{id}/edit', [PetaSituasiTanahController::class, 'edit'])->name('petaSituasi.edit');
+		Route::put('/peta-situasi-tanah/{id}/update', [PetaSituasiTanahController::class, 'update'])->name('petaSituasi.update');
+
+		Route::get('/surat-situasi-tanah', [SuratSituasiTanahController::class, 'create'])->name('suratSituasi.create');
+		Route::post('/surat-situasi-tanah', [SuratSituasiTanahController::class, 'store'])->name('suratSituasi.store');
+		Route::get('/surat-situasi-tanah/{id}/edit', [SuratSituasiTanahController::class, 'edit'])->name('suratSituasi.edit');
+		Route::put('/surat-situasi-tanah/{id}/update', [SuratSituasiTanahController::class, 'update'])->name('suratSituasi.update');
 	});
 
 	Route::prefix('data')->group(function () {
-		Route::get('/ganti-rugi', [GantiRugiController::class, 'data'])->name('ganti-rugi.index');
 		Route::get('/ganti-rugi/dttable', [GantiRugiController::class, 'dttable']);
-		Route::get('/ganti-rugi/{id}', [GantiRugiController::class, 'show'])->name('ganti-rugi.show');
-		Route::delete('/ganti-rugi/{id}', [GantiRugiController::class, 'destroy'])->name('ganti-rugi.destroy');
+		Route::get('/ganti-rugi', [GantiRugiController::class, 'data'])->name('gantiRugi.index');
+		Route::get('/ganti-rugi/{id}', [GantiRugiController::class, 'show'])->name('gantiRugi.show');
+		Route::delete('/ganti-rugi/{id}', [GantiRugiController::class, 'destroy'])->name('gantiRugi.destroy');
 
-		Route::get('/kepemilikan-tanah', [KepemilikanTanahController::class, 'data'])->name('kepemilikan-tanah.index');
 		Route::get('/kepemilikan-tanah/dttable', [KepemilikanTanahController::class, 'dttable']);
-		Route::get('/kepemilikan-tanah/{id}', [KepemilikanTanahController::class, 'show'])->name('kepemilikan-tanah.show');
-		Route::delete('/kepemilikan-tanah/{id}', [KepemilikanTanahController::class, 'destroy'])->name('kepemilikan-tanah.destroy');
+		Route::get('/kepemilikan-tanah', [KepemilikanTanahController::class, 'data'])->name('kepemilikanTanah.index');
+		Route::get('/kepemilikan-tanah/{id}', [KepemilikanTanahController::class, 'show'])->name('kepemilikanTanah.show');
+		Route::delete('/kepemilikan-tanah/{id}', [KepemilikanTanahController::class, 'destroy'])->name('kepemilikanTanah.destroy');
+
+		Route::get('/peta-situasi-tanah/dttable', [PetaSituasiTanahController::class, 'dttable']);
+		Route::get('/peta-situasi-tanah', [PetaSituasiTanahController::class, 'data'])->name('petaSituasi.index');
+		Route::get('/peta-situasi-tanah/{id}', [PetaSituasiTanahController::class, 'show'])->name('petaSituasi.show');
+		Route::delete('/peta-situasi-tanah/{id}', [PetaSituasiTanahController::class, 'destroy'])->name('petaSituasi.destroy');
+
+		Route::get('/surat-situasi-tanah/dttable', [SuratSituasiTanahController::class, 'dttable']);
+		Route::get('/surat-situasi-tanah', [SuratSituasiTanahController::class, 'data'])->name('suratSituasi.index');
+		Route::get('/surat-situasi-tanah/{id}', [SuratSituasiTanahController::class, 'show'])->name('suratSituasi.show');
+		Route::delete('/surat-situasi-tanah/{id}', [SuratSituasiTanahController::class, 'destroy'])->name('suratSituasi.destroy');
 	});
 });
