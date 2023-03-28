@@ -150,6 +150,7 @@ class KepemilikanTanahController extends Controller
 				"jabatan_saksi_satu" => ["required_with:nama_saksi_satu"],
 				"jabatan_saksi_dua" => ["required_with:nama_saksi_dua"],
 				"jabatan_saksi_tiga" => ["required_with:nama_saksi_tiga"],
+				"mengetahui" => ["required"],
 			],
 			[
 				"tanggal_ref.date" => "format tanggal tidak cocok",
@@ -186,6 +187,7 @@ class KepemilikanTanahController extends Controller
 				"jabatan_saksi_satu.required_with" => "isikan jabatan saksi satu",
 				"jabatan_saksi_dua.required_with" => "isikan jabatan saksi dua",
 				"jabatan_saksi_tiga.required_with" => "isikan jabatan saksi tiga",
+				"mengetahui.required" => "wajib diisi",
 			]
 		);
 
@@ -269,6 +271,7 @@ class KepemilikanTanahController extends Controller
 				"jabatan_saksi_satu" => ["required_with:nama_saksi_satu"],
 				"jabatan_saksi_dua" => ["required_with:nama_saksi_dua"],
 				"jabatan_saksi_tiga" => ["required_with:nama_saksi_tiga"],
+				"mengetahui" => ["required"],
 			],
 			[
 				"tanggal_ref.date" => "format tanggal tidak cocok",
@@ -305,6 +308,7 @@ class KepemilikanTanahController extends Controller
 				"jabatan_saksi_satu.required_with" => "isikan jabatan saksi satu",
 				"jabatan_saksi_dua.required_with" => "isikan jabatan saksi dua",
 				"jabatan_saksi_tiga.required_with" => "isikan jabatan saksi tiga",
+				"mengetahui.required" => "wajib diisi",
 			]
 		);
 

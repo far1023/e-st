@@ -137,6 +137,7 @@ class GantiRugiController extends Controller
 			$request->all(),
 			[
 				"no_reg" => ["required", "unique:spgrs"],
+				"tanggal_reg" => ["required", "date"],
 				"tanggal_ref" => ["nullable", "date"],
 				"nama_pihak_pertama" => ["required"],
 				"tempat_lahir_pihak_pertama" => ["required"],
@@ -166,6 +167,7 @@ class GantiRugiController extends Controller
 			[
 				"no_reg.required" => "wajib diisi",
 				"no_reg.unique" => "nomor regis sudah terdaftar",
+				"tanggal_reg.date" => "format tanggal tidak cocok",
 				"tanggal_ref.date" => "format tanggal tidak cocok",
 				"nama_pihak_pertama.required" => "wajib diisi",
 				"tempat_lahir_pihak_pertama.required" => "wajib diisi",
@@ -262,6 +264,7 @@ class GantiRugiController extends Controller
 			$request->all(),
 			[
 				"no_reg" => ["required", "unique:spgrs,no_reg," . $id],
+				"tanggal_reg" => ["required", "date"],
 				"tanggal_ref" => ["nullable", "date"],
 				"nama_pihak_pertama" => ["required"],
 				"tempat_lahir_pihak_pertama" => ["required"],
@@ -291,6 +294,7 @@ class GantiRugiController extends Controller
 			[
 				"no_reg.required" => "wajib diisi",
 				"no_reg.unique" => "nomor regis sudah terdaftar",
+				"tanggal_reg.date" => "format tanggal tidak cocok",
 				"tanggal_ref.date" => "format tanggal tidak cocok",
 				"nama_pihak_pertama.required" => "wajib diisi",
 				"tempat_lahir_pihak_pertama.required" => "wajib diisi",
