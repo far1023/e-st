@@ -14,17 +14,12 @@ use Illuminate\Support\Facades\Validator;
 
 class KepemilikanTanahController extends Controller
 {
-	public function index()
-	{
-		//
-	}
-
 	public function data()
 	{
 		return view('back.content.data.skt', [
 			"title" => "Data SKT",
 			"css"	=> ['datatable'],
-			"js"	=> 'data/sktjs'
+			"js"	=> 'data/sktJs'
 		]);
 	}
 
@@ -72,7 +67,7 @@ class KepemilikanTanahController extends Controller
 	public function show(int $id)
 	{
 		try {
-			$data = Skt::find($id)->toArray();
+			$data = Skt::findOrFail($id)->toArray();
 			foreach ($data as $key => $value) {
 				if (!is_int($value)) {
 					$data[$key] = VignereCip::decrypt($value);
@@ -110,11 +105,11 @@ class KepemilikanTanahController extends Controller
 			"kades" => ($kades) ? $kades->name : '',
 		];
 
-		return view('back.content.formulir.formskt', [
+		return view('back.content.formulir.formSkt', [
 			"data" => $data,
 			"title" => "Formulir SKT",
 			"css"	=> ['stepper', 'datepicker'],
-			"js"	=> 'formulir/sktjs'
+			"js"	=> 'formulir/addSktJs'
 		]);
 	}
 
@@ -232,10 +227,11 @@ class KepemilikanTanahController extends Controller
 
 	public function edit(int $id)
 	{
-		return view('back.content.formulir.formskt', [
+		return view('back.content.formulir.formSkt', [
+			"data" => NULL,
 			"title" => "Formulir SKT - Edit",
 			"css"	=> ['stepper', 'datepicker'],
-			"js"	=> 'formulir/editsktjs'
+			"js"	=> 'formulir/editSktJs'
 		]);
 	}
 
@@ -355,7 +351,6 @@ class KepemilikanTanahController extends Controller
 	public function destroy(int $id)
 	{
 		$user = User::find(Auth::user()->id);
-		$data = Skt::findOrFail($id);
 
 		if (!$user->can('delete skt')) {
 			return response()->json(
@@ -368,6 +363,7 @@ class KepemilikanTanahController extends Controller
 		}
 
 		try {
+			$data = Skt::findOrFail($id);
 			$data->delete();
 			return response()->json(
 				new APIResponse(
