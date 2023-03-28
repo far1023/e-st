@@ -102,7 +102,16 @@ class KepemilikanTanahController extends Controller
 
 	public function create()
 	{
+		$kades = User::whereHas('roles', function ($query) {
+			$query->where('name', 'kades');
+		})->first();
+
+		$data = [
+			"kades" => ($kades) ? $kades->name : '',
+		];
+
 		return view('back.content.formulir.formskt', [
+			"data" => $data,
 			"title" => "Formulir SKT",
 			"css"	=> ['stepper', 'datepicker'],
 			"js"	=> 'formulir/sktjs'
