@@ -39,6 +39,7 @@
               message: res.message,
               position: 'topCenter'
             });
+            $('.card-body').html(res.message + ' <a href="{{ url('formulir/kepemilikan-tanah') }}">Ajukan baru</a>');
           } else {
             iziToast.error({
               title: 'Error!',

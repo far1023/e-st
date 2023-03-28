@@ -78,6 +78,7 @@
               message: res.message,
               position: 'topCenter'
             });
+            $('.card-body').html(res.message + ' <a href="{{ url('formulir/ganti-rugi') }}">Ajukan baru</a>');
           } else {
             iziToast.error({
               title: 'Error!',

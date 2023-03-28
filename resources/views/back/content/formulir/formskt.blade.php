@@ -55,7 +55,7 @@
                 <div id="data-pemilik" class="content" role="tabpanel" aria-labelledby="data-pemilik-trigger">
                   <p>Saya yang bertanda tangan di bawah ini :</p>
                   <div class="form-group">
-                    <label for="nama_pemilik">Nama Lengkap</label>
+                    <label for="nama_pemilik">Nama Lengkap</label> <small><i>(yang membuat pernyataan)</i></small>
                     <input type="text" class="form-control" name="nama_pemilik" id="nama_pemilik" placeholder="">
                     <small class="text-danger err-msg" id="nama_pemilik_error"></small>
                   </div>
@@ -284,7 +284,7 @@
                   </div>
                 </div>
                 <div id="data-saksi" class="content" role="tabpanel" aria-labelledby="data-saksi-trigger">
-                  <p>Yang mengetahui :</p>
+                  <p>Yang menjadi saksi :</p>
                   <div class="row">
                     <div class="col-sm-6">
                       <div class="form-group">
@@ -332,6 +332,12 @@
                         <small class="text-danger err-msg" id="jabatan_saksi_tiga_error"></small>
                       </div>
                     </div>
+                  </div>
+                  <p class="pt-4">Yang mengetahui :</p>
+                  <div class="form-group">
+                    <label for="mengetahui">Kepala Desa Air Putih</label>
+                    <input type="text" class="form-control" name="mengetahui" id="mengetahui" value="{{ $data ? $data['kades'] : '' }}">
+                    <small class="text-danger err-msg" id="mengetahui_error"></small>
                   </div>
                   <div class="pt-4">
                     <button type="button" class="btn btn-outline-secondary" onclick="stepper.previous()"><i class="las la-chevron-left"></i> Sebelumnya</button>
