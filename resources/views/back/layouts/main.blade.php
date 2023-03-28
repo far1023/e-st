@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta charset="utf-8" />
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link href="{{ asset('css/mystyle.css') }}" rel="stylesheet" />
   <link href="{{ asset('template/plugins/line-awesome/css/line-awesome.min.css') }}" rel="stylesheet" />
   <link href="{{ asset('template/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}" rel="stylesheet" />
   <link href="{{ asset('template/dist/css/adminlte.min.css') }}" rel="stylesheet" />
