@@ -111,8 +111,17 @@ class GantiRugiController extends Controller
 			$no_reg = 1 . "/SPGR/" . date('Y');
 		}
 
+		$kades = User::whereHas('roles', function ($query) {
+			$query->where('name', 'kades');
+		})->first();
+
+		$data = [
+			"kades" => ($kades) ? $kades->name : '',
+			"no_reg" => $no_reg
+		];
+
 		return view('back.content.formulir.formspgr', [
-			"no_reg" => $no_reg,
+			"data" => $data,
 			"title" => "Formulir SPGR",
 			"css"	=> ['stepper', 'datepicker'],
 			"js"	=> 'formulir/spgrjs'
@@ -236,10 +245,8 @@ class GantiRugiController extends Controller
 
 	public function edit(int $id)
 	{
-		$no_reg = Spgr::find($id)->no_reg;
-
 		return view('back.content.formulir.formspgr', [
-			"no_reg" => VignereCip::decrypt($no_reg),
+			"data" => NULL,
 			"title" => "Formulir SPGR - Edit",
 			"css"	=> ['stepper', 'datepicker'],
 			"js"	=> 'formulir/editspgrjs'

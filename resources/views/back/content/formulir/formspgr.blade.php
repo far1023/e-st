@@ -277,14 +277,31 @@
                 </div>
                 <div id="diketahui" class="content" role="tabpanel" aria-labelledby="diketahui-trigger">
                   <p>Mengetahui</p>
-                  <div class="form-group">
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text">No.Reg</span>
+                  <div class="row">
+                    <div class="col-sm-7">
+                      <div class="form-group">
+                        <div class="form-group">
+                          <label for="tanggal_ref">Reg No.</label>
+                          <input type="text" class="form-control" name="no_reg" id="no_reg" value="{{ $data ? $data['no_reg'] : '' }}">
+                          <small class="text-danger err-msg" id="no_reg_error"></small>
+                        </div>
                       </div>
-                      <input type="text" class="form-control" name="no_reg" id="no_reg" value="{{ $no_reg }}">
                     </div>
-                    <small class="text-danger err-msg" id="no_reg_error"></small>
+                    <div class="col-sm-7">
+                      <div class="form-group">
+                        <label for="tanggal_reg">Tanggal</label>
+                        <input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#tanggal_reg" id="tanggal_reg"
+                          name="tanggal_reg" autocomplete="off">
+                        <small class="text-danger err-msg" id="tanggal_reg_error"></small>
+                      </div>
+                    </div>
+                    <div class="col-sm-7">
+                      <div class="form-group">
+                        <label for="mengetahui">Kepala Desa Air Putih</label>
+                        <input type="text" class="form-control" name="mengetahui" id="mengetahui" value="{{ $data ? $data['kades'] : '' }}">
+                        <small class="text-danger err-msg" id="mengetahui_error"></small>
+                      </div>
+                    </div>
                   </div>
                   <div class="pt-4">
                     <button type="button" class="btn btn-outline-secondary" onclick="stepper.previous()"><i class="las la-chevron-left"></i> Sebelumnya</button>
