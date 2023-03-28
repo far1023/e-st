@@ -14,17 +14,12 @@ use Illuminate\Support\Facades\Validator;
 
 class GantiRugiController extends Controller
 {
-	public function index()
-	{
-		//
-	}
-
 	public function data()
 	{
 		return view('back.content.data.spgr', [
 			"title" => "Data SPGR",
 			"css"	=> ['datatable'],
-			"js"	=> 'data/spgrjs'
+			"js"	=> 'data/spgrJs'
 		]);
 	}
 
@@ -72,7 +67,7 @@ class GantiRugiController extends Controller
 	public function show(int $id)
 	{
 		try {
-			$data = Spgr::find($id)->toArray();
+			$data = Spgr::findOrFail($id)->toArray();
 			foreach ($data as $key => $value) {
 				if (!is_int($value)) {
 					$data[$key] = VignereCip::decrypt($value);
@@ -102,10 +97,10 @@ class GantiRugiController extends Controller
 
 	public function create()
 	{
-		$data = Spgr::latest()->first();
+		$spgr = Spgr::latest()->first();
 
-		if ($data && explode('/', $data->no_reg)[2] == date('Y')) {
-			$no_reg = intval(strtok($data->no_reg, '/')) + 1;
+		if ($spgr && explode('/', $spgr->no_reg)[2] == date('Y')) {
+			$no_reg = intval(strtok($spgr->no_reg, '/')) + 1;
 			$no_reg = $no_reg . "/SPGR/" . date('Y');
 		} else {
 			$no_reg = 1 . "/SPGR/" . date('Y');
@@ -120,11 +115,11 @@ class GantiRugiController extends Controller
 			"no_reg" => $no_reg
 		];
 
-		return view('back.content.formulir.formspgr', [
+		return view('back.content.formulir.formSpgr', [
 			"data" => $data,
 			"title" => "Formulir SPGR",
 			"css"	=> ['stepper', 'datepicker'],
-			"js"	=> 'formulir/spgrjs'
+			"js"	=> 'formulir/addSpgrJs'
 		]);
 	}
 
@@ -245,13 +240,13 @@ class GantiRugiController extends Controller
 		}
 	}
 
-	public function edit(int $id)
+	public function edit()
 	{
-		return view('back.content.formulir.formspgr', [
+		return view('back.content.formulir.formSpgr', [
 			"data" => NULL,
 			"title" => "Formulir SPGR - Edit",
 			"css"	=> ['stepper', 'datepicker'],
-			"js"	=> 'formulir/editspgrjs'
+			"js"	=> 'formulir/editSpgrJs'
 		]);
 	}
 

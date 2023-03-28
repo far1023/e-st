@@ -14,7 +14,7 @@
   <div class="content">
     <div class="container-fluid">
       <div class="card">
-        <div class="card-header">Buat Surat Pernyataan Ganti Rugi</div>
+        <div class="card-header text-center">Surat Pernyataan Ganti Rugi</div>
         <div class="card-body">
           <form id="formspgr" class="px-lg-5">
             @csrf
