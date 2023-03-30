@@ -40,7 +40,7 @@ class SuratSituasiTanahController extends Controller
 
 		return DataTables::of($data)
 			->addColumn('aksi', function ($data) use ($user) {
-				$aksi = "";
+				$aksi = "<div class='float-right'>";
 
 				if ($user->can('edit skt')) {
 					$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-secondary mb-1 mx-1 edit'>Edit</a>";
@@ -49,7 +49,7 @@ class SuratSituasiTanahController extends Controller
 					$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 mx-1 hapus'>Delete</a>";
 				}
 
-				return $aksi;
+				return $aksi .= "</div>";
 			})
 			->rawColumns(['aksi'])
 			->addIndexColumn()

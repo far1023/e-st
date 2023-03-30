@@ -27,16 +27,16 @@
             </a>
           </div>
           <table class="table table-striped table-hover dttables" id="dtPetaSituasi">
-            <thead>
+            <thead class="text-xs text-gray">
               <tr>
-                <th style="text-align: center;">#</th>
-                <th style="text-align: center;">Nama</th>
-                <th style="text-align: center;">Jalan/Gang</th>
-                <th style="text-align: center;">Desa</th>
-                <th style="text-align: center;">Kecamatan</th>
-                <th style="text-align: center;">Kabupaten</th>
-                <th style="text-align: center;">Luas Tanah</th>
-                <th style="text-align: center;">Aksi</th>
+                <th>#</th>
+                <th>Nama</th>
+                <th>Jalan/Gang</th>
+                <th>Desa</th>
+                <th>Kecamatan</th>
+                <th>Kabupaten</th>
+                <th>Luas Tanah</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>

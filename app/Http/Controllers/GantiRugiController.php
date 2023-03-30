@@ -45,7 +45,7 @@ class GantiRugiController extends Controller
 			})
 			->addColumn('aksi', function ($data) use ($user) {
 				if ($user) {
-					$aksi = "";
+					$aksi = "<div class='float-right'>";
 
 					if ($user->can('edit spgr')) {
 						$aksi .= "<a href='" . url('formulir/ganti-rugi/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 mx-1 edit'>Edit</a>";
@@ -54,7 +54,7 @@ class GantiRugiController extends Controller
 						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 mx-1 hapus'>Delete</a>";
 					}
 
-					return $aksi;
+					return $aksi .= "</div>";
 				}
 
 				return NULL;

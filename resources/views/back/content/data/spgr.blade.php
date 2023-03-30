@@ -27,16 +27,16 @@
             </a>
           </div>
           <table class="table table-striped table-hover dttables" id="dt_spgr">
-            <thead>
+            <thead class="text-xs text-gray">
               <tr>
-                <th style="text-align: center;">#</th>
-                <th style="text-align: center;">No.Reg</th>
-                <th style="text-align: center;">NIK</th>
-                <th style="text-align: center;">Pihak Pertama</th>
-                <th style="text-align: center;">TTL</th>
-                <th style="text-align: center;">Warganegara</th>
-                <th style="text-align: center;">Alamat</th>
-                <th style="text-align: center;">Aksi</th>
+                <th>#</th>
+                <th>No.Reg</th>
+                <th>NIK</th>
+                <th>Pihak Pertama</th>
+                <th>TTL</th>
+                <th>Warganegara</th>
+                <th>Alamat</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>

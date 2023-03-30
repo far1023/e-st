@@ -16,6 +16,7 @@
       $('.form-control').removeClass('is-invalid');
       $('#id').val('');
       $('#formRole').trigger('reset');
+      $('#modalRole').modal('show');
     });
 
     $('body').on('click', '.edit', function() {
@@ -25,6 +26,7 @@
       $('#formRole').trigger('reset');
       $('#id').val($(this).data('id'));
       $('#name').val($(this).data('name'));
+      $('#modalRole').modal('show');
     });
 
     $('#dataRole').DataTable({
@@ -37,7 +39,7 @@
       autoWidth: false,
       processing: true,
       serverSide: true,
-      ajax: "{{ url('/control/role/dttabledatarole') }}",
+      ajax: "{{ url('/controls/roles/dttable') }}",
       columns: [{
           data: 'DT_RowIndex',
           name: 'DT_RowIndex'
@@ -60,24 +62,21 @@
     $('body').on('click', '.hapus', function() {
       if (confirm("Hapus data ini?")) {
         $.ajax({
-          type: "POST",
-          url: "{{ url('/control/role/destroy') }}",
-          data: {
-            id: $(this).data("id"),
-          },
+          type: "DELETE",
+          url: "{{ url('controls/roles') }}" + "/" + $(this).data("id"),
           dataType: "json",
           success: function(res) {
-            if (res.status == 'ok') {
+            if (res.ok) {
               iziToast.success({
-                title: 'Deleted!',
-                message: 'Data berhasil dihapus',
+                title: 'Done!',
+                message: res.message,
                 position: 'topCenter'
               });
               $("#dataRole").DataTable().ajax.reload(null, false);
             } else {
               iziToast.error({
                 title: 'Error!',
-                message: 'Terjadi kesalahan',
+                message: "somthing wnet wrong",
                 position: 'topCenter'
               });
             }
@@ -85,7 +84,7 @@
           error: function(res) {
             iziToast.error({
               title: 'Error!',
-              message: 'Terjadi kesalahan',
+              message: res.responseJSON.message,
               position: 'topCenter'
             });
           }
@@ -96,9 +95,16 @@
     $('#formRole').submit(function(e) {
       e.preventDefault();
       var formData = new FormData($(this)[0]);
+      var signed_url = "{{ url('/controls/roles') }}";
+
+      if ($('#id').val()) {
+        formData.append('_method', 'PUT');
+        signed_url = "{{ url('controls/roles') }}" + "/" + $('#id').val();
+      }
+
       $.ajax({
-        type: "post",
-        url: "{{ url('/control/role/store') }}",
+        type: "POST",
+        url: signed_url,
         data: formData,
         dataType: "json",
         contentType: false,
@@ -109,35 +115,39 @@
           $('#btn-save').attr('disabled', true).html('<span class="spinner-border spinner-border-sm"></span>');
         },
         success: function(res) {
-          if (res.status == false) {
-            iziToast.error({
-              title: 'Error!',
-              message: 'Cek kembali formulir',
-              position: 'topCenter'
-            });
-            $.each(res.error, function(i, val) {
-              $("#" + i + "_error").html(val);
-              $("#" + i).addClass("is-invalid");
-            });
-          } else {
+          if (res.ok) {
             iziToast.success({
               title: 'Stored!',
-              message: res.msg,
+              message: res.message,
               position: 'topCenter'
             });
+
             $("#dataRole").DataTable().ajax.reload(null, false);
-            $(this).trigger('reset');
             $('#modalRole').modal('hide');
-            $('.err-msg').html('');
+            $('.modal-title').html('');
+            $('#formRole').trigger('reset');
+          } else {
+            iziToast.error({
+              title: 'Error!',
+              message: "somthing wnet wrong",
+              position: 'topCenter'
+            });
           }
+
           $('#btn-save').attr('disabled', false).html('Simpan');
         },
-        error: function(data) {
+        error: function(res) {
           $('#btn-save').attr('disabled', false).html('Simpan');
+
           iziToast.error({
             title: 'Error!',
-            message: 'Terjadi kesalahan pada server. Coba lagi dalam beberapa saat.',
+            message: res.responseJSON.message,
             position: 'topCenter'
+          });
+
+          $.each(res.responseJSON.error, function(i, val) {
+            $("#" + i + "_error").html(val);
+            $("#" + i).addClass("is-invalid");
           });
         }
       });

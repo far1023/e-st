@@ -16,25 +16,23 @@
   <div class="content">
     <div class="container-fluid">
       <div class="card">
-        <div class="card-header">
-          <button type="button" id="add" class="btn btn-sm btn-outline-primary float-sm-right">Tambah pengguna</button>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive py-3">
-            <table class="table table-striped table-hover dttables" id="dt_user">
-              <thead>
-                <tr>
-                  <th style="text-align: center;">#</th>
-                  <th style="text-align: center;">Username</th>
-                  <th style="text-align: center;">Nama</th>
-                  <th style="text-align: center;">Level</th>
-                  <th style="text-align: center;">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
+        <div class="card-body table-responsive px-0 py-4">
+          <div class="mx-3">
+            <button type="button" id="add" class="btn btn-sm btn-outline-primary float-sm-right">Tambah pengguna</button>
           </div>
+          <table class="table table-striped table-hover dttables" id="dt_user">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Nama</th>
+                <th>Level</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
