@@ -9,6 +9,9 @@ use App\Http\Controllers\PetaSituasiTanahController;
 use App\Http\Controllers\SuratSituasiTanahController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VignereController;
+use App\Http\Controllers\Access\RoleController;
+use App\Http\Controllers\Access\PermissionController;
+use App\Http\Controllers\Access\RoleHasPermissionController;
 
 Route::get('/', function () {
 	return view('login');
@@ -80,5 +83,18 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('/surat-situasi-tanah', [SuratSituasiTanahController::class, 'data'])->name('suratSituasi.index');
 		Route::get('/surat-situasi-tanah/{id}', [SuratSituasiTanahController::class, 'show'])->name('suratSituasi.show');
 		Route::delete('/surat-situasi-tanah/{id}', [SuratSituasiTanahController::class, 'destroy'])->name('suratSituasi.destroy');
+	});
+
+	Route::group(['middleware' => ['role:superadmin']], function () {
+		Route::prefix('controls')->group(function () {
+			Route::get('/roles/dttable', [RoleController::class, 'dttable']);
+			Route::resource('/roles', RoleController::class);
+
+			Route::get('/permissions/dttable', [PermissionController::class, 'dttable']);
+			Route::resource('/permissions', PermissionController::class);
+
+			Route::get('/access-granting/dttable', [RoleHasPermissionController::class, 'dttable']);
+			Route::resource('/access-granting', RoleHasPermissionController::class);
+		});
 	});
 });
