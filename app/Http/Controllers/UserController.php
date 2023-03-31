@@ -28,8 +28,8 @@ class UserController extends Controller
 	{
 		$user = User::find(Auth::user()->id);
 
-		// $data = User::with('roles')->where('id', '!=', 1);
-		$data = User::with('roles');
+		$data = User::with('roles')->where('id', '!=', 1);
+		// $data = User::with('roles');
 
 		return DataTables::of($data->get())
 			->addColumn('aksi', function ($data) use ($user) {
