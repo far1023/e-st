@@ -33,22 +33,25 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ url('formulir/ganti-rugi') }}" class="nav-link {{ Request::segment(2) == 'ganti-rugi' ? 'active' : '' }}">
+              <a href="{{ url('formulir/ganti-rugi') }}" class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'ganti-rugi' ? 'active' : '' }}">
                 &emsp;&emsp;<p>SPGR</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ url('formulir/kepemilikan-tanah') }}" class="nav-link {{ Request::segment(2) == 'kepemilikan-tanah' ? 'active' : '' }}">
+              <a href="{{ url('formulir/kepemilikan-tanah') }}"
+                class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'kepemilikan-tanah' ? 'active' : '' }}">
                 &emsp;&emsp;<p>SKT</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ url('formulir/peta-situasi-tanah') }}" class="nav-link {{ Request::segment(2) == 'peta-situasi-tanah' ? 'active' : '' }}">
+              <a href="{{ url('formulir/peta-situasi-tanah') }}"
+                class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'peta-situasi-tanah' ? 'active' : '' }}">
                 &emsp;&emsp;<p>Peta Situasi Tanah</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ url('formulir/surat-situasi-tanah') }}" class="nav-link {{ Request::segment(2) == 'surat-situasi-tanah' ? 'active' : '' }}">
+              <a href="{{ url('formulir/surat-situasi-tanah') }}"
+                class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'surat-situasi-tanah' ? 'active' : '' }}">
                 &emsp;&emsp;<p>Surat Situasi Tanah</p>
               </a>
             </li>
@@ -64,22 +67,23 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ url('data/ganti-rugi') }}" class="nav-link {{ Request::segment(2) == 'ganti-rugi' ? 'active' : '' }}">
+              <a href="{{ url('data/ganti-rugi') }}" class="nav-link {{ Request::segment(1) == 'data' && Request::segment(2) == 'ganti-rugi' ? 'active' : '' }}">
                 &emsp;&emsp;<p>SPGR</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ url('data/kepemilikan-tanah') }}" class="nav-link {{ Request::segment(2) == 'kepemilikan-tanah' ? 'active' : '' }}">
+              <a href="{{ url('data/kepemilikan-tanah') }}" class="nav-link {{ Request::segment(1) == 'data' && Request::segment(2) == 'kepemilikan-tanah' ? 'active' : '' }}">
                 &emsp;&emsp;<p>SKT</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ url('data/peta-situasi-tanah') }}" class="nav-link {{ Request::segment(2) == 'peta-situasi-tanah' ? 'active' : '' }}">
+              <a href="{{ url('data/peta-situasi-tanah') }}" class="nav-link {{ Request::segment(1) == 'data' && Request::segment(2) == 'peta-situasi-tanah' ? 'active' : '' }}">
                 &emsp;&emsp;<p>Peta Situasi Tanah</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ url('data/surat-situasi-tanah') }}" class="nav-link {{ Request::segment(2) == 'surat-situasi-tanah' ? 'active' : '' }}">
+              <a href="{{ url('data/surat-situasi-tanah') }}"
+                class="nav-link {{ Request::segment(1) == 'data' && Request::segment(2) == 'surat-situasi-tanah' ? 'active' : '' }}">
                 &emsp;&emsp;<p>Surat Situasi Tanah</p>
               </a>
             </li>
