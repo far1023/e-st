@@ -22,6 +22,26 @@ class SuratSituasiTanahController extends Controller
 		]);
 	}
 
+	public function printOut(int $id)
+	{
+		if ($data = SuratSituasiTanah::find($id)->toArray()) {
+			foreach ($data as $key => $value) {
+				if (!is_int($value)) {
+					$data[$key] = VignereCip::decrypt($value);
+				}
+			}
+		} else {
+			$data = [];
+		}
+
+		return view('back.content.printOut.suratSituasi', [
+			"data" => $data,
+			"title" => "Surat Situasi Tanah",
+			"css"	=> [],
+			"js"	=> 'printOutJs'
+		]);
+	}
+
 	public function dttable()
 	{
 		$user = User::find(Auth::user()->id);
@@ -42,11 +62,23 @@ class SuratSituasiTanahController extends Controller
 			->addColumn('aksi', function ($data) use ($user) {
 				$aksi = "<div class='float-right'>";
 
+				if ($user->can('approve surat-situasi')) {
+					if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'])) {
+						$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+					} else if ($user->hasRole('superadmin')) {
+						$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+					}
+				}
+				if ($user->can('print-out') && ($data['checked_at'] && $data['approved_at'])) {
+					$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 cetak' title='Cetak surat'>Cetak</a>";
+				} else {
+					$aksi .= "<a href='" . url('data/surat-situasi-tanah/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1 ml-1' title='Lihat surat'>Cek</a>";
+				}
 				if ($user->can('edit skt')) {
-					$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-secondary mb-1 mx-1 edit'>Edit</a>";
+					$aksi .= "<a href='" . url('formulir/surat-situasi-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 ml-1 edit' title='Edit data'>Edit</a>";
 				}
 				if ($user->can('delete skt')) {
-					$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 mx-1 hapus'>Delete</a>";
+					$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class='las la-times'></i></a>";
 				}
 
 				return $aksi .= "</div>";
@@ -59,7 +91,13 @@ class SuratSituasiTanahController extends Controller
 	public function show(int $id)
 	{
 		try {
-			$data = SuratSituasiTanah::findOrFail($id);
+			$data = SuratSituasiTanah::findOrFail($id)->toArray();
+			foreach ($data as $key => $value) {
+				if (!is_int($value)) {
+					$data[$key] = VignereCip::decrypt($value);
+				}
+			}
+
 			return response()->json(
 				new APIResponse(
 					true,
@@ -82,7 +120,7 @@ class SuratSituasiTanahController extends Controller
 	public function create()
 	{
 		return view('back.content.formulir.formSuratSituasi', [
-			"title" => "Formulir Peta Situasi Tanah",
+			"title" => "Formulir Surat Situasi Tanah",
 			"css"	=> ['stepper', 'datepicker'],
 			"js"	=> 'formulir/addSuratSituasiJs'
 		]);

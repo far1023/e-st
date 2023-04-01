@@ -15,48 +15,52 @@
             </p>
           </a>
         </li>
-        <li class="nav-item">
-          <a href="{{ url('pengguna') }}" class="nav-link {{ Request::segment(1) == 'pengguna' ? 'active' : '' }}">
-            <i class="nav-icon las la-th"></i>
-            <p>
-              Pengguna
-            </p>
-          </a>
-        </li>
-        <li class="nav-item {{ Request::segment(1) == 'formulir' ? 'menu-open' : '' }}">
-          <a href="javascript:void(0)" class="nav-link {{ Request::segment(1) == 'formulir' ? 'active' : '' }}">
-            <i class="nav-icon las la-tachometer-alt"></i>
-            <p>
-              Form Surat
-              <i class="right las la-angle-left"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{{ url('formulir/ganti-rugi') }}" class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'ganti-rugi' ? 'active' : '' }}">
-                &emsp;&emsp;<p>SPGR</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ url('formulir/kepemilikan-tanah') }}"
-                class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'kepemilikan-tanah' ? 'active' : '' }}">
-                &emsp;&emsp;<p>SKT</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ url('formulir/peta-situasi-tanah') }}"
-                class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'peta-situasi-tanah' ? 'active' : '' }}">
-                &emsp;&emsp;<p>Peta Situasi Tanah</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ url('formulir/surat-situasi-tanah') }}"
-                class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'surat-situasi-tanah' ? 'active' : '' }}">
-                &emsp;&emsp;<p>Surat Situasi Tanah</p>
-              </a>
-            </li>
-          </ul>
-        </li>
+        @can('access pengguna')
+          <li class="nav-item">
+            <a href="{{ url('pengguna') }}" class="nav-link {{ Request::segment(1) == 'pengguna' ? 'active' : '' }}">
+              <i class="nav-icon las la-th"></i>
+              <p>
+                Pengguna
+              </p>
+            </a>
+          </li>
+        @endcan
+        @can('access form')
+          <li class="nav-item {{ Request::segment(1) == 'formulir' ? 'menu-open' : '' }}">
+            <a href="javascript:void(0)" class="nav-link {{ Request::segment(1) == 'formulir' ? 'active' : '' }}">
+              <i class="nav-icon las la-tachometer-alt"></i>
+              <p>
+                Form Surat
+                <i class="right las la-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ url('formulir/ganti-rugi') }}" class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'ganti-rugi' ? 'active' : '' }}">
+                  &emsp;&emsp;<p>SPGR</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url('formulir/kepemilikan-tanah') }}"
+                  class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'kepemilikan-tanah' ? 'active' : '' }}">
+                  &emsp;&emsp;<p>SKT</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url('formulir/peta-situasi-tanah') }}"
+                  class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'peta-situasi-tanah' ? 'active' : '' }}">
+                  &emsp;&emsp;<p>Peta Situasi Tanah</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ url('formulir/surat-situasi-tanah') }}"
+                  class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'surat-situasi-tanah' ? 'active' : '' }}">
+                  &emsp;&emsp;<p>Surat Situasi Tanah</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+        @endcan
         <li class="nav-item {{ Request::segment(1) == 'data' ? 'menu-open' : '' }}">
           <a href="javascript:void(0)" class="nav-link {{ Request::segment(1) == 'data' ? 'active' : '' }}">
             <i class="nav-icon las la-tachometer-alt"></i>

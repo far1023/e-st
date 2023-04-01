@@ -20,6 +20,7 @@
   });
 
   function load() {
+    $('#load').html('<span class="spinner-border spinner-border-sm"></span> sedang memuat...');
     $.ajax({
       type: "GET",
       url: "{{ url('data/ganti-rugi') }}" + "/" + "{{ request()->route('id') }}",
@@ -36,8 +37,10 @@
             position: 'topCenter'
           });
         }
+        $('#load').html('');
       },
       error: function(res) {
+        $('#load').html('');
         iziToast.error({
           title: 'Error!',
           message: res.responseJSON.message,

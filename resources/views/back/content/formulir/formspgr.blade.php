@@ -17,6 +17,7 @@
         <div class="card-header text-center">Surat Pernyataan Ganti Rugi</div>
         <div class="card-body">
           <form id="formspgr" class="px-lg-5">
+            <div id="load"></div>
             @csrf
             {{ request()->route('id') ? method_field('PUT') : '' }}
             <div class="bs-stepper">
@@ -136,7 +137,7 @@
                 <div id="data-pendukung" class="content" role="tabpanel" aria-labelledby="data-pendukung-trigger">
                   <div class="form-group">
                     <div class="row">
-                      <div class="col-sm-10">
+                      <div class="col-sm-7">
                         <label for="alamat_tanah">Alamat Tanah</label>
                         <input type="text" class="form-control" name="alamat_tanah" id="alamat_tanah" placeholder="">
                         <small class="text-danger err-msg" id="alamat_tanah_error"></small>
@@ -150,6 +151,11 @@
                           </div>
                         </div>
                         <small class="text-danger err-msg" id="luas_tanah_error"></small>
+                      </div>
+                      <div class="col-sm-3">
+                        <label for="pergunaan_tanah">Pergunaan Tanah</label>
+                        <input type="text" class="form-control" name="pergunaan_tanah" id="pergunaan_tanah" placeholder="">
+                        <small class="text-danger err-msg" id="pergunaan_tanah_error"></small>
                       </div>
                     </div>
                   </div>

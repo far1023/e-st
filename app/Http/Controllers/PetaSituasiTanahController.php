@@ -26,6 +26,26 @@ class PetaSituasiTanahController extends Controller
 		]);
 	}
 
+	public function printOut(int $id)
+	{
+		if ($data = PetaSituasiTanah::find($id)->toArray()) {
+			foreach ($data as $key => $value) {
+				if (!is_int($value)) {
+					$data[$key] = VignereCip::decrypt($value);
+				}
+			}
+		} else {
+			$data = [];
+		}
+
+		return view('back.content.printOut.petaSituasi', [
+			"data" => $data,
+			"title" => "Peta Situasi Tanah",
+			"css"	=> [],
+			"js"	=> 'printOutJs'
+		]);
+	}
+
 	public function dttable()
 	{
 		$user = User::find(Auth::user()->id);
@@ -45,11 +65,23 @@ class PetaSituasiTanahController extends Controller
 			->addColumn('aksi', function ($data) use ($user) {
 				$aksi = "<div class='float-right'>";
 
+				if ($user->can('approve peta-situasi')) {
+					if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'])) {
+						$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve'  title='verifikasi permohonan'>Verifikasi</a>";
+					} else if ($user->hasRole('superadmin')) {
+						$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve'  title='verifikasi permohonan'>Verifikasi</a>";
+					}
+				}
+				if ($user->can('print-out') && ($data['checked_at'] && $data['approved_at'])) {
+					$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 cetak' title='Cetak surat'>Cetak</a>";
+				} else {
+					$aksi .= "<a href='" . url('data/peta-situasi-tanah/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1 ml-1' title='Lihat surat'>Cek</a>";
+				}
 				if ($user->can('edit peta-situasi')) {
-					$aksi .= "<a href='" . url('formulir/peta-situasi/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 mx-1 edit'>Edit</a>";
+					$aksi .= "<a href='" . url('formulir/peta-situasi-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 ml-1 edit' title='Edit data'>Edit</a>";
 				}
 				if ($user->can('delete peta-situasi')) {
-					$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 mx-1 hapus'>Delete</a>";
+					$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class='las la-times'></i></a>";
 				}
 
 				return $aksi .= "</div>";
@@ -62,7 +94,13 @@ class PetaSituasiTanahController extends Controller
 	public function show(int $id)
 	{
 		try {
-			$data = PetaSituasiTanah::findOrFail($id);
+			$data = PetaSituasiTanah::findOrFail($id)->toArray();
+			foreach ($data as $key => $value) {
+				if (!is_int($value)) {
+					$data[$key] = VignereCip::decrypt($value);
+				}
+			}
+
 			return response()->json(
 				new APIResponse(
 					true,

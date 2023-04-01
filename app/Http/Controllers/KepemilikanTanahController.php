@@ -23,6 +23,26 @@ class KepemilikanTanahController extends Controller
 		]);
 	}
 
+	public function printOut(int $id)
+	{
+		$data = [];
+
+		if ($data = Skt::find($id)->toArray()) {
+			foreach ($data as $key => $value) {
+				if (!is_int($value)) {
+					$data[$key] = VignereCip::decrypt($value);
+				}
+			}
+		}
+
+		return view('back.content.printOut.skt', [
+			"data" => $data,
+			"title" => "Surat Kepemilikan Tanah",
+			"css"	=> [],
+			"js"	=> 'printOutJs'
+		]);
+	}
+
 	public function dttable()
 	{
 		$user = User::find(Auth::user()->id);
@@ -36,8 +56,6 @@ class KepemilikanTanahController extends Controller
 			}
 			$data[$i] = $value;
 		}
-		// var_dump($data);
-		// die;
 
 		return DataTables::of($data)
 			->addColumn('ttl', function ($data) {
@@ -47,11 +65,23 @@ class KepemilikanTanahController extends Controller
 				if ($user) {
 					$aksi = "<div class='float-right'>";
 
+					if ($user->can('approve skt')) {
+						if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'])) {
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+						} else if ($user->hasRole('superadmin')) {
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+						}
+					}
+					if ($user->can('print-out') && ($data['checked_at'] && $data['approved_at'])) {
+						$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 cetak' title='Cetak surat'>Cetak</a>";
+					} else {
+						$aksi .= "<a href='" . url('data/kepemilikan-tanah/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1 ml-1' title='Lihat surat'>Cek</a>";
+					}
 					if ($user->can('edit skt')) {
-						$aksi .= "<a href='" . url('formulir/kepemilikan-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 mx-1 edit'>Edit</a>";
+						$aksi .= "<a href='" . url('formulir/kepemilikan-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 ml-1 edit' title='Edit data'>Edit</a>";
 					}
 					if ($user->can('delete skt')) {
-						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 mx-1 hapus'>Delete</a>";
+						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class=' las la-times'></i></a>";
 					}
 
 					return $aksi .= "</div>";

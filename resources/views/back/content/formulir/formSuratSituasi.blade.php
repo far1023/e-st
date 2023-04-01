@@ -17,6 +17,7 @@
         <div class="card-header text-center">Situasi Tanah</div>
         <div class="card-body">
           <form id="formsuratsituasi" class="px-lg-5">
+            <div id="load"></div>
             @csrf
             {{ request()->route('id') ? method_field('PUT') : '' }}
             <div class="bs-stepper">
@@ -106,6 +107,22 @@
                     <label for="atas_nama">Atas Nama</label> <small><i>(yang membuat pernyataan)</i></small>
                     <input type="text" class="form-control" name="atas_nama" id="atas_nama" placeholder="">
                     <small class="text-danger err-msg" id="atas_nama_error"></small>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="keterangan">Keterangan</label>
+                        <input type="text" class="form-control" name="keterangan" id="keterangan" placeholder="">
+                        <small class="text-danger err-msg" id="keterangan_error"></small>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="pihak_kedua">Pihak lain</label>
+                        <input type="text" class="form-control" name="pihak_kedua" id="pihak_kedua" placeholder="">
+                        <small class="text-danger err-msg" id="pihak_kedua_error"></small>
+                      </div>
+                    </div>
                   </div>
                   <div class="form-group">
                     <label for="sketsa">Sketsa</label>

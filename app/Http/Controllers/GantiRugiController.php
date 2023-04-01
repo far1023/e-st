@@ -23,6 +23,26 @@ class GantiRugiController extends Controller
 		]);
 	}
 
+	public function printOut(int $id)
+	{
+		$data = [];
+
+		if ($data = Spgr::find($id)->toArray()) {
+			foreach ($data as $key => $value) {
+				if (!is_int($value)) {
+					$data[$key] = VignereCip::decrypt($value);
+				}
+			}
+		}
+
+		return view('back.content.printOut.spgr', [
+			"data" => $data,
+			"title" => "Surat Pernyataan Ganti Rugi",
+			"css"	=> [],
+			"js"	=> 'printOutJs'
+		]);
+	}
+
 	public function dttable()
 	{
 		$user = User::find(Auth::user()->id);
@@ -36,8 +56,6 @@ class GantiRugiController extends Controller
 			}
 			$data[$i] = $value;
 		}
-		// var_dump($data);
-		// die;
 
 		return DataTables::of($data)
 			->addColumn('ttl', function ($data) {
@@ -45,13 +63,25 @@ class GantiRugiController extends Controller
 			})
 			->addColumn('aksi', function ($data) use ($user) {
 				if ($user) {
-					$aksi = "<div class='float-right'>";
+					$aksi = "<div class='text-right'>";
 
+					if ($user->can('approve spgr')) {
+						if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'])) {
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+						} else if ($user->hasRole('superadmin')) {
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+						}
+					}
+					if ($user->can('print-out') && ($data['checked_at'] && $data['approved_at'])) {
+						$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 cetak' title='Cetak surat'>Cetak</a>";
+					} else {
+						$aksi .= "<a href='" . url('data/ganti-rugi/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1 ml-1' title='Lihat surat'>Cek</a>";
+					}
 					if ($user->can('edit spgr')) {
-						$aksi .= "<a href='" . url('formulir/ganti-rugi/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 mx-1 edit'>Edit</a>";
+						$aksi .= "<a href='" . url('formulir/ganti-rugi/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 ml-1 edit' title='Edit data'>Edit</a>";
 					}
 					if ($user->can('delete spgr')) {
-						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 mx-1 hapus'>Delete</a>";
+						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class=' las la-times'></i></a>";
 					}
 
 					return $aksi .= "</div>";
@@ -148,6 +178,7 @@ class GantiRugiController extends Controller
 				"alamat_pihak_kedua" => ["required"],
 				"alamat_tanah" => ["required"],
 				"luas_tanah" => ["required", "integer"],
+				"pergunaan_tanah" => ["required"],
 				"besaran" => ["required", "integer"],
 				"terbilang" => ["required"],
 				"batas_utara" => ["required"],
@@ -162,6 +193,7 @@ class GantiRugiController extends Controller
 			[
 				"no_reg.required" => "wajib diisi",
 				"no_reg.unique" => "nomor regis sudah terdaftar",
+				"tanggal_reg.required" => "wajib diisi",
 				"tanggal_reg.date" => "format tanggal tidak cocok",
 				"tanggal_ref.date" => "format tanggal tidak cocok",
 				"nama_pihak_pertama.required" => "wajib diisi",
@@ -181,6 +213,7 @@ class GantiRugiController extends Controller
 				"alamat_tanah.required" => "wajib diisi",
 				"luas_tanah.required" => "wajib diisi",
 				"luas_tanah.integer" => "isikan hanya dengan bilangan bulat",
+				"pergunaan_tanah.required" => "wajib diisi",
 				"besaran.required" => "wajib diisi",
 				"besaran.integer" => "isikan hanya dengan bilangan bulat",
 				"terbilang.required" => "wajib diisi",
@@ -275,6 +308,7 @@ class GantiRugiController extends Controller
 				"alamat_pihak_kedua" => ["required"],
 				"alamat_tanah" => ["required"],
 				"luas_tanah" => ["required", "integer"],
+				"pergunaan_tanah" => ["required"],
 				"besaran" => ["required", "integer"],
 				"terbilang" => ["required"],
 				"batas_utara" => ["required"],
@@ -289,6 +323,7 @@ class GantiRugiController extends Controller
 			[
 				"no_reg.required" => "wajib diisi",
 				"no_reg.unique" => "nomor regis sudah terdaftar",
+				"tanggal_reg.required" => "wajib diisi",
 				"tanggal_reg.date" => "format tanggal tidak cocok",
 				"tanggal_ref.date" => "format tanggal tidak cocok",
 				"nama_pihak_pertama.required" => "wajib diisi",
@@ -308,6 +343,7 @@ class GantiRugiController extends Controller
 				"alamat_tanah.required" => "wajib diisi",
 				"luas_tanah.required" => "wajib diisi",
 				"luas_tanah.integer" => "isikan hanya dengan bilangan bulat",
+				"pergunaan_tanah.required" => "wajib diisi",
 				"besaran.required" => "wajib diisi",
 				"besaran.integer" => "isikan hanya dengan bilangan bulat",
 				"terbilang.required" => "wajib diisi",

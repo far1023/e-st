@@ -19,6 +19,7 @@
         </div>
         <div class="card-body">
           <form id="formskt" class="px-lg-5">
+            <div id="load"></div>
             @csrf
             {{ request()->route('id') ? method_field('PUT') : '' }}
             <div class="bs-stepper">
