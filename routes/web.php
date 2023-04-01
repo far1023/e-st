@@ -83,6 +83,11 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('/surat-situasi-tanah', [SuratSituasiTanahController::class, 'data'])->name('suratSituasi.index');
 		Route::get('/surat-situasi-tanah/{id}', [SuratSituasiTanahController::class, 'show'])->name('suratSituasi.show');
 		Route::delete('/surat-situasi-tanah/{id}', [SuratSituasiTanahController::class, 'destroy'])->name('suratSituasi.destroy');
+
+		Route::get('/ganti-rugi/{id}/cek', [GantiRugiController::class, 'printOut'])->name('gantiRugi.cek');
+		Route::get('/kepemilikan-tanah/{id}/cek', [KepemilikanTanahController::class, 'printOut'])->name('kepemilikanTanah.cek');
+		Route::get('/peta-situasi-tanah/{id}/cek', [PetaSituasiTanahController::class, 'printOut'])->name('petaSituasi.cek');
+		Route::get('/surat-situasi-tanah/{id}/cek', [SuratSituasiTanahController::class, 'printOut'])->name('suratSituasi.cek');
 	});
 
 	Route::group(['middleware' => ['role:superadmin']], function () {
