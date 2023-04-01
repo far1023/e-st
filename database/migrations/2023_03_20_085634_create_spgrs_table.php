@@ -33,6 +33,7 @@ return new class extends Migration
 			$table->string('alamat_pihak_kedua');
 			$table->string('alamat_tanah');
 			$table->integer('luas_tanah');
+			$table->string('pergunaan_tanah');
 			$table->integer('besaran');
 			$table->string('terbilang');
 			$table->string('batas_utara');

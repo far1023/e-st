@@ -24,6 +24,8 @@ return new class extends Migration
 			$table->string('kabupaten');
 			$table->integer('luas_tanah');
 			$table->string('atas_nama');
+			$table->string('keterangan')->nullable();
+			$table->string('pihak_kedua')->nullable();
 			$table->string('sketsa')->nullable();
 			$table->string('nama_saksi_satu')->nullable();
 			$table->string('jabatan_saksi_satu')->nullable();
