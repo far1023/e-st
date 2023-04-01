@@ -1,0 +1,39 @@
+@media print {
+	#printMe {
+		text-align: justify;
+  	text-justify: inter-word;
+	}
+
+	h5 ~ h5 {
+		page-break-inside: avoid;
+	}
+	.new-sheet ~ .new-sheet {
+		page-break-before: always;
+	}
+	th, td {
+		padding: 1px;
+	}
+	.print-none {
+		display: none;
+	}
+	.page-footer {
+		padding-top: 8px;
+		border-top: 2px solid black;
+		position: fixed; 
+		bottom: 0; 
+		left: 0cm; 
+		right: 0cm;
+		height: 1in;
+		font-size: 12px;
+	}
+
+	body {margin: 0;}
+
+	.page-footer, .page-footer-space {
+		height: 1.1in;
+	}
+
+	@page {
+		margin: 20mm
+	}
+}
