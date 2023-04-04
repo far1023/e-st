@@ -18,28 +18,51 @@ class KepemilikanTanahController extends Controller
 	{
 		return view('back.content.data.skt', [
 			"title" => "Data SKT",
-			"css"	=> ['datatable'],
+			"css"	=> ['datatable', 'sweet-alert'],
 			"js"	=> 'data/sktJs'
+		]);
+	}
+
+	public function printSheet(int $id)
+	{
+		if ($skt = Skt::find($id)->toArray()) {
+			foreach ($skt as $key => $value) {
+				if (!is_int($value)) {
+					$skt[$key] = VignereCip::decrypt($value);
+				}
+			}
+		} else {
+			$skt = [];
+		}
+
+		$data = [
+			'result' => $skt,
+			'signed_url' => url('data/kepemilikan-tanah/' . $id . '/print-out')
+		];
+
+		return view('back.content.printSheet', [
+			"data" => $data,
+			"title" => "Kepemilikan Tanah",
+			"css"	=> [],
+			"js"	=> 'printSheetJs'
 		]);
 	}
 
 	public function printOut(int $id)
 	{
-		$data = [];
-
 		if ($data = Skt::find($id)->toArray()) {
 			foreach ($data as $key => $value) {
 				if (!is_int($value)) {
 					$data[$key] = VignereCip::decrypt($value);
 				}
 			}
+		} else {
+			$data = [];
 		}
 
 		return view('back.content.printOut.skt', [
 			"data" => $data,
-			"title" => "Surat Kepemilikan Tanah",
-			"css"	=> [],
-			"js"	=> 'printOutJs'
+			"title" => "Kepemilikan Tanah",
 		]);
 	}
 
@@ -63,24 +86,28 @@ class KepemilikanTanahController extends Controller
 			})
 			->addColumn('aksi', function ($data) use ($user) {
 				if ($user) {
-					$aksi = "<div class='float-right'>";
+					$aksi = "<div class='text-right'>";
 
-					if ($user->can('approve skt')) {
-						if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'])) {
-							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
-						} else if ($user->hasRole('superadmin')) {
-							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+					if ($user->can('approve Skt')) {
+						if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'] && $data['checked_at'])) {
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+						} else if ($user->hasRole('superadmin') && !$data['checked_at']) {
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
 						}
 					}
-					if ($user->can('print-out') && ($data['checked_at'] && $data['approved_at'])) {
-						$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 cetak' title='Cetak surat'>Cetak</a>";
+					if (($data['checked_at'] && $data['approved_at'])) {
+						if ($user->can('print-out')) {
+							if ($user->can('print-out')) {
+								$aksi .= "<a href='javascript:void(0)' data-url='" . url('data/kepemilikan-tanah/' . $data['id'] . '/print-out') . "' class='btn btn-sm btn-success mb-1 mr-1 cetak' title='Cetak surat'>Cetak</a>";
+							}
+						}
 					} else {
-						$aksi .= "<a href='" . url('data/kepemilikan-tanah/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1 ml-1' title='Lihat surat'>Cek</a>";
+						if ($user->can('edit Skt')) {
+							$aksi .= "<a href='" . url('formulir/kepemilikan-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 mr-1 edit' title='Edit data'>Edit</a>";
+						}
 					}
-					if ($user->can('edit skt')) {
-						$aksi .= "<a href='" . url('formulir/kepemilikan-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 ml-1 edit' title='Edit data'>Edit</a>";
-					}
-					if ($user->can('delete skt')) {
+					$aksi .= "<a href='" . url('data/kepemilikan-tanah/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1' title='Lihat surat'>Cek</a>";
+					if ($user->can('delete Skt')) {
 						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class=' las la-times'></i></a>";
 					}
 
@@ -89,7 +116,20 @@ class KepemilikanTanahController extends Controller
 
 				return NULL;
 			})
-			->rawColumns(['ttl', 'aksi'])
+			->addColumn('status', function ($data) {
+				$status = '';
+
+				if ($data['approved_at']) {
+					$status .= '<span class="text-success">DISETUJUI</span>';
+				} else if ($data['checked_at'] && !$data['approved_at']) {
+					$status .= '<span class="text-dark">MENUNGGU PERSETUJUAN - KADES</span>';
+				} else {
+					$status .= '<span class="text-dark">MENUNGGU PERSETUJUAN - SEKDES</span>';
+				}
+
+				return $status;
+			})
+			->rawColumns(['ttl', 'status', 'aksi'])
 			->addIndexColumn()
 			->toJson();
 	}
@@ -364,6 +404,52 @@ class KepemilikanTanahController extends Controller
 					true,
 					"Data SKT berhasil diperbaharui",
 					$request->all()
+				),
+				201
+			);
+		} catch (\Throwable $th) {
+			return response()->json(
+				new APIResponse(
+					false,
+					$th->getMessage()
+				),
+				500
+			);
+		}
+	}
+
+	public function approve(int $id)
+	{
+		$user = User::find(Auth::user()->id);
+
+		if (!$user->can('approve skt')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
+
+		if ($user->hasRole('kades')) {
+			$data = [
+				'approved_at' => date('Y-m-d')
+			];
+		} else {
+			$data = [
+				'checked_at' => date('Y-m-d')
+			];
+		}
+
+		try {
+			$skt = Skt::findOrFail($id);
+			$skt->update($data);
+			return response()->json(
+				new APIResponse(
+					true,
+					"Status SKT diperbaharui",
+					$data
 				),
 				201
 			);

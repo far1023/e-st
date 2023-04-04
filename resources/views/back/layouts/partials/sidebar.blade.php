@@ -1,5 +1,5 @@
 <aside class="main-sidebar sidebar-dark-primary">
-  <a href="index3.html" class="brand-link">
+  <a href="/" class="brand-link">
     <span class="brand-text font-weight-light">E-ST</span>
   </a>
 

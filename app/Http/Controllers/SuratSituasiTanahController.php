@@ -17,8 +17,33 @@ class SuratSituasiTanahController extends Controller
 	{
 		return view('back.content.data.suratSituasi', [
 			"title" => "Data Surat Situasi Tanah",
-			"css"	=> ['datatable'],
+			"css"	=> ['datatable', 'sweet-alert'],
 			"js"	=> 'data/suratSituasiJs'
+		]);
+	}
+
+	public function printSheet(int $id)
+	{
+		if ($surat_situasi = SuratSituasiTanah::find($id)->toArray()) {
+			foreach ($surat_situasi as $key => $value) {
+				if (!is_int($value)) {
+					$surat_situasi[$key] = VignereCip::decrypt($value);
+				}
+			}
+		} else {
+			$surat_situasi = [];
+		}
+
+		$data = [
+			'result' => $surat_situasi,
+			'signed_url' => url('data/surat-situasi-tanah/' . $id . '/print-out')
+		];
+
+		return view('back.content.printSheet', [
+			"data" => $data,
+			"title" => "Surat Situasi Tanah",
+			"css"	=> [],
+			"js"	=> 'printSheetJs'
 		]);
 	}
 
@@ -37,8 +62,6 @@ class SuratSituasiTanahController extends Controller
 		return view('back.content.printOut.suratSituasi', [
 			"data" => $data,
 			"title" => "Surat Situasi Tanah",
-			"css"	=> [],
-			"js"	=> 'printOutJs'
 		]);
 	}
 
@@ -60,30 +83,49 @@ class SuratSituasiTanahController extends Controller
 
 		return DataTables::of($data)
 			->addColumn('aksi', function ($data) use ($user) {
-				$aksi = "<div class='float-right'>";
+				if ($user) {
+					$aksi = "<div class='text-right'>";
 
-				if ($user->can('approve surat-situasi')) {
-					if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'])) {
-						$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
-					} else if ($user->hasRole('superadmin')) {
-						$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+					if ($user->can('approve spgr')) {
+						if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'] && $data['checked_at'])) {
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+						} else if ($user->hasRole('superadmin') && !$data['checked_at']) {
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+						}
 					}
-				}
-				if ($user->can('print-out') && ($data['checked_at'] && $data['approved_at'])) {
-					$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 cetak' title='Cetak surat'>Cetak</a>";
-				} else {
-					$aksi .= "<a href='" . url('data/surat-situasi-tanah/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1 ml-1' title='Lihat surat'>Cek</a>";
-				}
-				if ($user->can('edit skt')) {
-					$aksi .= "<a href='" . url('formulir/surat-situasi-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 ml-1 edit' title='Edit data'>Edit</a>";
-				}
-				if ($user->can('delete skt')) {
-					$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class='las la-times'></i></a>";
+					if (($data['checked_at'] && $data['approved_at'])) {
+						if ($user->can('print-out')) {
+							$aksi .= "<a href='javascript:void(0)' data-url='" . url('data/surat-situasi-tanah/' . $data['id'] . '/print-out') . "' class='btn btn-sm btn-success mb-1 mr-1 cetak' title='Cetak surat'>Cetak</a>";
+						}
+					} else {
+						if ($user->can('edit spgr')) {
+							$aksi .= "<a href='" . url('formulir/surat-situasi-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 mr-1 edit' title='Edit data'>Edit</a>";
+						}
+					}
+					$aksi .= "<a href='" . url('data/surat-situasi-tanah/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1' title='Lihat surat'>Cek</a>";
+					if ($user->can('delete spgr')) {
+						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class=' las la-times'></i></a>";
+					}
+
+					return $aksi .= "</div>";
 				}
 
-				return $aksi .= "</div>";
+				return NULL;
 			})
-			->rawColumns(['aksi'])
+			->addColumn('status', function ($data) {
+				$status = '';
+
+				if ($data['approved_at']) {
+					$status .= '<span class="text-success">DISETUJUI</span>';
+				} else if ($data['checked_at'] && !$data['approved_at']) {
+					$status .= '<span class="text-dark">MENUNGGU PERSETUJUAN - KADES</span>';
+				} else {
+					$status .= '<span class="text-dark">MENUNGGU PERSETUJUAN - SEKDES</span>';
+				}
+
+				return $status;
+			})
+			->rawColumns(['status', 'aksi'])
 			->addIndexColumn()
 			->toJson();
 	}
@@ -135,6 +177,7 @@ class SuratSituasiTanahController extends Controller
 				"rt" => ["required"],
 				"rw" => ["required"],
 				"desa" => ["required"],
+				"dusun" => ["required"],
 				"kecamatan" => ["required"],
 				"kabupaten" => ["required"],
 				"luas_tanah" => ["required", "integer"],
@@ -149,6 +192,7 @@ class SuratSituasiTanahController extends Controller
 				"rt.required" => "wajib diisi",
 				"rw.required" => "wajib diisi",
 				"desa.required" => "wajib diisi",
+				"dusun.required" => "wajib diisi",
 				"kecamatan.required" => "wajib diisi",
 				"kabupaten.required" => "wajib diisi",
 				"luas_tanah.required" => "wajib diisi",
@@ -174,11 +218,38 @@ class SuratSituasiTanahController extends Controller
 		}
 
 		foreach ($request->all() as $key => $value) {
-			$request[$key] = VignereCip::encrypt($value);
+			if ($key != 'sketsa') {
+				$request[$key] = VignereCip::encrypt($value);
+			}
+		}
+
+		$data = [
+			"jalan_gang" => $request['jalan_gang'],
+			"rt" => $request["rt"],
+			"rw" => $request["rw"],
+			"desa" => $request["desa"],
+			"dusun" => $request["dusun"],
+			"kecamatan" => $request["kecamatan"],
+			"kabupaten" => $request["kabupaten"],
+			"luas_tanah" => $request["luas_tanah"],
+			"atas_nama" => $request["atas_nama"],
+			"nama_saksi_satu" => $request["nama_saksi_satu"],
+			"jabatan_saksi_satu" => $request["jabatan_saksi_satu"],
+			"nama_saksi_dua" => $request["nama_saksi_dua"],
+			"jabatan_saksi_dua" => $request["jabatan_saksi_dua"],
+			"nama_saksi_tiga" => $request["nama_saksi_tiga"],
+			"jabatan_saksi_tiga" => $request["jabatan_saksi_tiga"],
+		];
+
+		if ($request->file()) {
+			$fileName = time() . '_surat_situasi.' . $request->sketsa->extension();
+			$filePath = $request->file('sketsa')->storeAs('images/sketsa', $fileName);
+
+			$data['sketsa'] = VignereCip::encrypt($filePath);
 		}
 
 		try {
-			SuratSituasiTanah::create($request->all());
+			SuratSituasiTanah::create($data);
 			return response()->json(
 				new APIResponse(
 					true,
@@ -257,17 +328,93 @@ class SuratSituasiTanahController extends Controller
 		}
 
 		foreach ($request->all() as $key => $value) {
-			$request[$key] = VignereCip::encrypt($value);
+
+			foreach ($request->all() as $key => $value) {
+				if ($key != 'sketsa') {
+					$request[$key] = VignereCip::encrypt($value);
+				}
+			}
+		}
+
+		$data = [
+			"jalan_gang" => $request['jalan_gang'],
+			"rt" => $request["rt"],
+			"rw" => $request["rw"],
+			"desa" => $request["desa"],
+			"dusun" => $request["dusun"],
+			"kecamatan" => $request["kecamatan"],
+			"kabupaten" => $request["kabupaten"],
+			"luas_tanah" => $request["luas_tanah"],
+			"atas_nama" => $request["atas_nama"],
+			"nama_saksi_satu" => $request["nama_saksi_satu"],
+			"jabatan_saksi_satu" => $request["jabatan_saksi_satu"],
+			"nama_saksi_dua" => $request["nama_saksi_dua"],
+			"jabatan_saksi_dua" => $request["jabatan_saksi_dua"],
+			"nama_saksi_tiga" => $request["nama_saksi_tiga"],
+			"jabatan_saksi_tiga" => $request["jabatan_saksi_tiga"],
+		];
+
+		if ($request->file()) {
+			$fileName = time() . '_surat_situasi.' . $request->sketsa->extension();
+			$filePath = $request->file('sketsa')->storeAs('images/sketsa', $fileName);
+
+			$data['sketsa'] = VignereCip::encrypt($filePath);
 		}
 
 		try {
 			$data = SuratSituasiTanah::findOrFail($id);
-			$data->update($request->all());
+			$data->update($data);
 			return response()->json(
 				new APIResponse(
 					true,
 					"Data Situasi Tanah berhasil diperbaharui",
 					$request->all()
+				),
+				201
+			);
+		} catch (\Throwable $th) {
+			return response()->json(
+				new APIResponse(
+					false,
+					$th->getMessage()
+				),
+				500
+			);
+		}
+	}
+
+	public function approve(int $id)
+	{
+		$user = User::find(Auth::user()->id);
+
+		if (!$user->can('approve surat-situasi')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
+
+		if ($user->hasRole('kades')) {
+			$data = [
+				'approved_at' => date('Y-m-d')
+			];
+		} else {
+			$data = [
+				'checked_at' => date('Y-m-d')
+			];
+		}
+
+		try {
+			$surat_situasi = SuratSituasiTanah::findOrFail($id);
+			$surat_situasi->update($data);
+			return response()->json(
+				new APIResponse(
+					true,
+					"Status Surat Situasi diperbaharui",
+					$data
 				),
 				201
 			);

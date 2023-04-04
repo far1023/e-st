@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use VignereCip;
+use Carbon\Carbon;
 use App\Models\Spgr;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Resources\APIResponse;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,28 +18,51 @@ class GantiRugiController extends Controller
 	{
 		return view('back.content.data.spgr', [
 			"title" => "Data SPGR",
-			"css"	=> ['datatable'],
+			"css"	=> ['datatable', 'sweet-alert'],
 			"js"	=> 'data/spgrJs'
+		]);
+	}
+
+	public function printSheet(int $id)
+	{
+		if ($spgr = Spgr::find($id)->toArray()) {
+			foreach ($spgr as $key => $value) {
+				if (!is_int($value)) {
+					$spgr[$key] = VignereCip::decrypt($value);
+				}
+			}
+		} else {
+			$spgr = [];
+		}
+
+		$data = [
+			'result' => $spgr,
+			'signed_url' => url('data/ganti-rugi/' . $id . '/print-out')
+		];
+
+		return view('back.content.printSheet', [
+			"data" => $data,
+			"title" => "Ganti Rugi",
+			"css"	=> [],
+			"js"	=> 'printSheetJs'
 		]);
 	}
 
 	public function printOut(int $id)
 	{
-		$data = [];
-
 		if ($data = Spgr::find($id)->toArray()) {
 			foreach ($data as $key => $value) {
 				if (!is_int($value)) {
 					$data[$key] = VignereCip::decrypt($value);
 				}
 			}
+		} else {
+			$data = [];
 		}
 
 		return view('back.content.printOut.spgr', [
 			"data" => $data,
-			"title" => "Surat Pernyataan Ganti Rugi",
-			"css"	=> [],
-			"js"	=> 'printOutJs'
+			"title" => "Ganti Rugi",
 		]);
 	}
 
@@ -66,20 +89,24 @@ class GantiRugiController extends Controller
 					$aksi = "<div class='text-right'>";
 
 					if ($user->can('approve spgr')) {
-						if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'])) {
-							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
-						} else if ($user->hasRole('superadmin')) {
-							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+						if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'] && $data['checked_at'])) {
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+						} else if ($user->hasRole('superadmin') && !$data['checked_at']) {
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
 						}
 					}
-					if ($user->can('print-out') && ($data['checked_at'] && $data['approved_at'])) {
-						$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 ml-1 cetak' title='Cetak surat'>Cetak</a>";
+					if (($data['checked_at'] && $data['approved_at'])) {
+						if ($user->can('print-out')) {
+							if ($user->can('print-out')) {
+								$aksi .= "<a href='javascript:void(0)' data-url='" . url('data/ganti-rugi/' . $data['id'] . '/print-out') . "' class='btn btn-sm btn-success mb-1 mr-1 cetak' title='Cetak surat'>Cetak</a>";
+							}
+						}
 					} else {
-						$aksi .= "<a href='" . url('data/ganti-rugi/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1 ml-1' title='Lihat surat'>Cek</a>";
+						if ($user->can('edit spgr')) {
+							$aksi .= "<a href='" . url('formulir/ganti-rugi/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 mr-1 edit' title='Edit data'>Edit</a>";
+						}
 					}
-					if ($user->can('edit spgr')) {
-						$aksi .= "<a href='" . url('formulir/ganti-rugi/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 ml-1 edit' title='Edit data'>Edit</a>";
-					}
+					$aksi .= "<a href='" . url('data/ganti-rugi/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1' title='Lihat surat'>Cek</a>";
 					if ($user->can('delete spgr')) {
 						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class=' las la-times'></i></a>";
 					}
@@ -89,7 +116,20 @@ class GantiRugiController extends Controller
 
 				return NULL;
 			})
-			->rawColumns(['ttl', 'aksi'])
+			->addColumn('status', function ($data) {
+				$status = '';
+
+				if ($data['approved_at']) {
+					$status .= '<span class="text-success">DISETUJUI</span>';
+				} else if ($data['checked_at'] && !$data['approved_at']) {
+					$status .= '<span class="text-dark">MENUNGGU PERSETUJUAN - KADES</span>';
+				} else {
+					$status .= '<span class="text-dark">MENUNGGU PERSETUJUAN - SEKDES</span>';
+				}
+
+				return $status;
+			})
+			->rawColumns(['ttl', 'status', 'aksi'])
 			->addIndexColumn()
 			->toJson();
 	}
@@ -390,6 +430,52 @@ class GantiRugiController extends Controller
 					true,
 					"Data SPGR berhasil diperbaharui",
 					$request->all()
+				),
+				201
+			);
+		} catch (\Throwable $th) {
+			return response()->json(
+				new APIResponse(
+					false,
+					$th->getMessage()
+				),
+				500
+			);
+		}
+	}
+
+	public function approve(int $id)
+	{
+		$user = User::find(Auth::user()->id);
+
+		if (!$user->can('approve spgr')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
+
+		if ($user->hasRole('kades')) {
+			$data = [
+				'approved_at' => date('Y-m-d')
+			];
+		} else {
+			$data = [
+				'checked_at' => date('Y-m-d')
+			];
+		}
+
+		try {
+			$spgr = Spgr::findOrFail($id);
+			$spgr->update($data);
+			return response()->json(
+				new APIResponse(
+					true,
+					"Status SPGR diperbaharui",
+					$data
 				),
 				201
 			);

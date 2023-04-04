@@ -1,7 +1,12 @@
 <script src="{{ asset('template/plugins/bs-stepper/js/bs-stepper.min.js') }}"></script>
+<script src="{{ asset('template/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
 
 <script>
   var stepper = new Stepper($('.bs-stepper')[0]);
+
+  $(function() {
+    bsCustomFileInput.init();
+  });
 
   $.ajaxSetup({
     headers: {

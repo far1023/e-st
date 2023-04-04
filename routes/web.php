@@ -67,27 +67,34 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::get('/ganti-rugi/dttable', [GantiRugiController::class, 'dttable']);
 		Route::get('/ganti-rugi', [GantiRugiController::class, 'data'])->name('gantiRugi.index');
 		Route::get('/ganti-rugi/{id}', [GantiRugiController::class, 'show'])->name('gantiRugi.show');
+		Route::get('/ganti-rugi/{id}/cek', [GantiRugiController::class, 'printSheet'])->name('gantiRugi.cek');
+		Route::get('/ganti-rugi/{id}/print-out', [GantiRugiController::class, 'printOut'])->name('gantiRugi.cetak');
+		Route::post('/ganti-rugi/approve/{id}', [GantiRugiController::class, 'approve'])->name('gantiRugi.approve');
 		Route::delete('/ganti-rugi/{id}', [GantiRugiController::class, 'destroy'])->name('gantiRugi.destroy');
 
 		Route::get('/kepemilikan-tanah/dttable', [KepemilikanTanahController::class, 'dttable']);
 		Route::get('/kepemilikan-tanah', [KepemilikanTanahController::class, 'data'])->name('kepemilikanTanah.index');
 		Route::get('/kepemilikan-tanah/{id}', [KepemilikanTanahController::class, 'show'])->name('kepemilikanTanah.show');
+		Route::get('/kepemilikan-tanah/{id}/cek', [KepemilikanTanahController::class, 'printSheet'])->name('kepemilikanTanah.cek');
+		Route::get('/kepemilikan-tanah/{id}/print-out', [KepemilikanTanahController::class, 'printOut'])->name('kepemilikanTanah.cetak');
+		Route::post('/kepemilikan-tanah/approve/{id}', [KepemilikanTanahController::class, 'approve'])->name('kepemilikanTanah.approve');
 		Route::delete('/kepemilikan-tanah/{id}', [KepemilikanTanahController::class, 'destroy'])->name('kepemilikanTanah.destroy');
 
 		Route::get('/peta-situasi-tanah/dttable', [PetaSituasiTanahController::class, 'dttable']);
 		Route::get('/peta-situasi-tanah', [PetaSituasiTanahController::class, 'data'])->name('petaSituasi.index');
 		Route::get('/peta-situasi-tanah/{id}', [PetaSituasiTanahController::class, 'show'])->name('petaSituasi.show');
+		Route::get('/peta-situasi-tanah/{id}/cek', [PetaSituasiTanahController::class, 'printSheet'])->name('petaSituasi.cek');
+		Route::get('/peta-situasi-tanah/{id}/print-out', [PetaSituasiTanahController::class, 'printOut'])->name('petaSituasi.cetak');
+		Route::post('/peta-situasi/approve/{id}', [PetaSituasiTanahController::class, 'approve'])->name('petaSituasi.approve');
 		Route::delete('/peta-situasi-tanah/{id}', [PetaSituasiTanahController::class, 'destroy'])->name('petaSituasi.destroy');
 
 		Route::get('/surat-situasi-tanah/dttable', [SuratSituasiTanahController::class, 'dttable']);
 		Route::get('/surat-situasi-tanah', [SuratSituasiTanahController::class, 'data'])->name('suratSituasi.index');
 		Route::get('/surat-situasi-tanah/{id}', [SuratSituasiTanahController::class, 'show'])->name('suratSituasi.show');
+		Route::get('/surat-situasi-tanah/{id}/cek', [SuratSituasiTanahController::class, 'printSheet'])->name('suratSituasi.cek');
+		Route::get('/surat-situasi-tanah/{id}/print-out', [SuratSituasiTanahController::class, 'printOut'])->name('suratSituasi.cetak');
+		Route::post('/surat-situasi-tanah/approve/{id}', [SuratSituasiTanahController::class, 'approve'])->name('suratSituasi.approve');
 		Route::delete('/surat-situasi-tanah/{id}', [SuratSituasiTanahController::class, 'destroy'])->name('suratSituasi.destroy');
-
-		Route::get('/ganti-rugi/{id}/cek', [GantiRugiController::class, 'printOut'])->name('gantiRugi.cek');
-		Route::get('/kepemilikan-tanah/{id}/cek', [KepemilikanTanahController::class, 'printOut'])->name('kepemilikanTanah.cek');
-		Route::get('/peta-situasi-tanah/{id}/cek', [PetaSituasiTanahController::class, 'printOut'])->name('petaSituasi.cek');
-		Route::get('/surat-situasi-tanah/{id}/cek', [SuratSituasiTanahController::class, 'printOut'])->name('suratSituasi.cek');
 	});
 
 	Route::group(['middleware' => ['role:superadmin']], function () {

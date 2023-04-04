@@ -33,14 +33,22 @@
                 <th>NIK</th>
                 <th>Pihak Pertama</th>
                 <th>TTL</th>
-                <th>Warganegara</th>
-                <th>Alamat</th>
+                <th>Status</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modal_prints" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body" id="myFrame">
         </div>
       </div>
     </div>

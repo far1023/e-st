@@ -126,7 +126,10 @@
                   </div>
                   <div class="form-group">
                     <label for="sketsa">Sketsa</label>
-                    <input type="text" class="form-control" name="sketsa" id="sketsa" placeholder="">
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="sketsa" name="sketsa">
+                      <label class="custom-file-label" for="sketsa">Choose file</label>
+                    </div>
                     <small class="text-danger err-msg" id="sketsa_error"></small>
                   </div>
                   <div class="pt-4">
