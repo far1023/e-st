@@ -9,7 +9,7 @@
         <li class="nav-header">NAVIGASI UTAMA</li>
         <li class="nav-item">
           <a href="{{ url('beranda') }}" class="nav-link {{ Request::segment(1) == 'beranda' ? 'active' : '' }}">
-            <i class="nav-icon las la-th"></i>
+            <i class="nav-icon las la-home"></i>
             <p>
               Beranda
             </p>
@@ -18,7 +18,7 @@
         @can('access pengguna')
           <li class="nav-item">
             <a href="{{ url('pengguna') }}" class="nav-link {{ Request::segment(1) == 'pengguna' ? 'active' : '' }}">
-              <i class="nav-icon las la-th"></i>
+              <i class="nav-icon las la-user-friends"></i>
               <p>
                 Pengguna
               </p>
@@ -28,7 +28,7 @@
         @can('access form')
           <li class="nav-item {{ Request::segment(1) == 'formulir' ? 'menu-open' : '' }}">
             <a href="javascript:void(0)" class="nav-link {{ Request::segment(1) == 'formulir' ? 'active' : '' }}">
-              <i class="nav-icon las la-tachometer-alt"></i>
+              <i class="nav-icon las la-edit"></i>
               <p>
                 Form Surat
                 <i class="right las la-angle-left"></i>
@@ -63,7 +63,7 @@
         @endcan
         <li class="nav-item {{ Request::segment(1) == 'data' ? 'menu-open' : '' }}">
           <a href="javascript:void(0)" class="nav-link {{ Request::segment(1) == 'data' ? 'active' : '' }}">
-            <i class="nav-icon las la-tachometer-alt"></i>
+            <i class="nav-icon las la-th"></i>
             <p>
               Data Surat
               <i class="right las la-angle-left"></i>
@@ -97,7 +97,7 @@
           <li class="nav-header">CONTROL ROOM</li>
           <li class="nav-item {{ Request::segment(1) == 'controls' ? 'menu-open' : '' }}">
             <a href="javascript:void(0)" class="nav-link {{ Request::segment(1) == 'controls' ? 'active' : '' }}">
-              <i class="nav-icon las la-tachometer-alt"></i>
+              <i class="nav-icon las la-id-card"></i>
               <p>
                 ACCESS
                 <i class="right las la-angle-left"></i>

@@ -12,6 +12,7 @@ use App\Http\Controllers\VignereController;
 use App\Http\Controllers\Access\RoleController;
 use App\Http\Controllers\Access\PermissionController;
 use App\Http\Controllers\Access\RoleHasPermissionController;
+use App\Http\Controllers\BerandaController;
 
 Route::get('/', function () {
 	return view('login');
@@ -25,11 +26,7 @@ Route::get('/logout', [AuthController::class, 'logout']);
 Route::get('/tes', [TesController::class, 'index']);
 
 Route::group(['middleware' => ['auth']], function () {
-	Route::view('/beranda', 'back/content/beranda', [
-		"title" => "Beranda",
-		"css"	=> [],
-		"js"	=> NULL
-	]);
+	Route::resource('/beranda', BerandaController::class);
 
 	Route::get('/pengguna/dttable', [UserController::class, 'dttable']);
 	Route::resource('/pengguna', UserController::class);
