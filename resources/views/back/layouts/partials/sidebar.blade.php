@@ -37,25 +37,29 @@
             <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="{{ url('formulir/ganti-rugi') }}" class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'ganti-rugi' ? 'active' : '' }}">
-                  &emsp;&emsp;<p>SPGR</p>
+                  <i class="nav-icon las la-hand-holding-usd la-lg"></i>
+                  <p>SPGR</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ url('formulir/kepemilikan-tanah') }}"
                   class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'kepemilikan-tanah' ? 'active' : '' }}">
-                  &emsp;&emsp;<p>SKT</p>
+                  <i class="nav-icon las la-certificate la-lg"></i>
+                  <p>SKT</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ url('formulir/peta-situasi-tanah') }}"
                   class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'peta-situasi-tanah' ? 'active' : '' }}">
-                  &emsp;&emsp;<p>Peta Situasi Tanah</p>
+                  <i class="nav-icon las la-map la-lg"></i>
+                  <p>Peta Situasi Tanah</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ url('formulir/surat-situasi-tanah') }}"
                   class="nav-link {{ Request::segment(1) == 'formulir' && Request::segment(2) == 'surat-situasi-tanah' ? 'active' : '' }}">
-                  &emsp;&emsp;<p>Surat Situasi Tanah</p>
+                  <i class="nav-icon las la-map-signs la-lg"></i>
+                  <p>Surat Situasi Tanah</p>
                 </a>
               </li>
             </ul>
@@ -72,23 +76,27 @@
           <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="{{ url('data/ganti-rugi') }}" class="nav-link {{ Request::segment(1) == 'data' && Request::segment(2) == 'ganti-rugi' ? 'active' : '' }}">
-                &emsp;&emsp;<p>SPGR</p>
+                <i class="nav-icon las la-hand-holding-usd la-lg"></i>
+                <p>SPGR</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{{ url('data/kepemilikan-tanah') }}" class="nav-link {{ Request::segment(1) == 'data' && Request::segment(2) == 'kepemilikan-tanah' ? 'active' : '' }}">
-                &emsp;&emsp;<p>SKT</p>
+                <i class="nav-icon las la-certificate la-lg"></i>
+                <p>SKT</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{{ url('data/peta-situasi-tanah') }}" class="nav-link {{ Request::segment(1) == 'data' && Request::segment(2) == 'peta-situasi-tanah' ? 'active' : '' }}">
-                &emsp;&emsp;<p>Peta Situasi Tanah</p>
+                <i class="nav-icon las la-map la-lg"></i>
+                <p>Peta Situasi Tanah</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="{{ url('data/surat-situasi-tanah') }}"
                 class="nav-link {{ Request::segment(1) == 'data' && Request::segment(2) == 'surat-situasi-tanah' ? 'active' : '' }}">
-                &emsp;&emsp;<p>Surat Situasi Tanah</p>
+                <i class="nav-icon las la-map-signs la-lg"></i>
+                <p>Surat Situasi Tanah</p>
               </a>
             </li>
           </ul>
@@ -106,17 +114,17 @@
             <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="{{ url('controls/roles') }}" class="nav-link {{ Request::segment(2) == 'roles' ? 'active' : '' }}">
-                  &emsp;&emsp;<p>Roles</p>
+                  <p>Roles</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ url('controls/permissions') }}" class="nav-link {{ Request::segment(2) == 'permissions' ? 'active' : '' }}">
-                  &emsp;&emsp;<p>Permissions</p>
+                  <p>Permissions</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ url('controls/access-granting') }}" class="nav-link {{ Request::segment(2) == 'access-granting' ? 'active' : '' }}">
-                  &emsp;&emsp;<p>Access Granting</p>
+                  <p>Access Granting</p>
                 </a>
               </li>
             </ul>
