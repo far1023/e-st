@@ -21,11 +21,6 @@
     <div class="container-fluid">
       <div class="card">
         <div class="card-body table-responsive px-0 py-4">
-          <div class="mx-3">
-            <a href="{{ url('formulir/ganti-rugi') }}" class="btn btn-sm btn-outline-primary float-right px-3">
-              <i class="fa fa-fw fa-plus"></i> Pengajuan Baru
-            </a>
-          </div>
           <table class="table table-striped table-hover dttables" id="dt_spgr">
             <thead class="text-xs text-gray">
               <tr>
