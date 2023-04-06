@@ -23,7 +23,9 @@
       success: function(res) {
         if (res.ok) {
           $.each(res.data, function(i, val) {
-            $("#" + i).val(val);
+            if (i != 'sketsa') {
+              $("#" + i).val(val);
+            }
           });
         } else {
           iziToast.error({

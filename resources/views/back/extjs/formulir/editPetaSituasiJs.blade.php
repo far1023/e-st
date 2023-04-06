@@ -21,9 +21,11 @@
       url: "{{ url('data/peta-situasi-tanah') }}" + "/" + "{{ request()->route('id') }}",
       dataType: "json",
       success: function(res) {
-        if (res.ok) {
+        if (res.ok && res.data != 'sketsa') {
           $.each(res.data, function(i, val) {
-            $("#" + i).val(val);
+            if (i != 'sketsa') {
+              $("#" + i).val(val);
+            }
           });
         } else {
           iziToast.error({
