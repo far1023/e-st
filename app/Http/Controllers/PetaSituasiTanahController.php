@@ -67,8 +67,6 @@ class PetaSituasiTanahController extends Controller
 
 	public function dttable()
 	{
-		$user = User::find(Auth::user()->id);
-
 		$data = PetaSituasiTanah::latest()->get()->toArray();
 
 		foreach ($data as $i => $value) {
@@ -81,28 +79,28 @@ class PetaSituasiTanahController extends Controller
 		}
 
 		return DataTables::of($data)
-			->addColumn('aksi', function ($data) use ($user) {
-				if ($user) {
+			->addColumn('aksi', function ($data) {
+				if (Auth::user()) {
 					$aksi = "<div class='text-right'>";
 
-					if ($user->can('approve spgr')) {
-						if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'] && $data['checked_at'])) {
+					if (Auth::user()->can('approve spgr')) {
+						if ((Auth::user()->hasRole('sekdes') && !$data['checked_at']) || (Auth::user()->hasRole('kades') && !$data['approved_at'] && $data['checked_at'])) {
 							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
-						} else if ($user->hasRole('superadmin') && !$data['checked_at']) {
+						} else if (Auth::user()->hasRole('superadmin') && !$data['checked_at']) {
 							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
 						}
 					}
 					if (($data['checked_at'] && $data['approved_at'])) {
-						if ($user->can('print-out')) {
+						if (Auth::user()->can('print-out')) {
 							$aksi .= "<a href='javascript:void(0)' data-url='" . url('data/peta-situasi-tanah/' . $data['id'] . '/print-out') . "' class='btn btn-sm btn-success mb-1 mr-1 cetak' title='Cetak surat'>Cetak</a>";
 						}
 					} else {
-						if ($user->can('edit spgr')) {
+						if (Auth::user()->can('edit spgr')) {
 							$aksi .= "<a href='" . url('formulir/peta-situasi-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 mr-1 edit' title='Edit data'>Edit</a>";
 						}
 					}
 					$aksi .= "<a href='" . url('data/peta-situasi-tanah/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1' title='Lihat surat'>Cek</a>";
-					if ($user->can('delete spgr')) {
+					if (Auth::user()->can('delete spgr')) {
 						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class=' las la-times'></i></a>";
 					}
 
