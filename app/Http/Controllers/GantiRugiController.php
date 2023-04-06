@@ -167,6 +167,10 @@ class GantiRugiController extends Controller
 
 	public function create()
 	{
+		if (!Auth::user()->can('add spgr')) {
+			abort(403, 'Unauthorized action.');
+		}
+
 		$spgr = Spgr::latest()->first();
 
 		if ($spgr && explode('/', $spgr->no_reg)[2] == date('Y')) {
@@ -195,6 +199,16 @@ class GantiRugiController extends Controller
 
 	public function store(Request $request)
 	{
+		if (!Auth::user()->can('add spgr')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
+
 		$request['besaran'] = str_replace(".", "", $request['besaran']);
 		$request['no_reg'] = VignereCip::encrypt($request['no_reg']);
 
@@ -315,6 +329,10 @@ class GantiRugiController extends Controller
 
 	public function edit()
 	{
+		if (!Auth::user()->can('edit spgr')) {
+			abort(403, 'Unauthorized action.');
+		}
+
 		return view('back.content.formulir.formSpgr', [
 			"data" => NULL,
 			"title" => "Formulir SPGR - Edit",
@@ -325,6 +343,16 @@ class GantiRugiController extends Controller
 
 	public function update(Request $request, int $id)
 	{
+		if (!Auth::user()->can('edit spgr')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
+
 		$request['besaran'] = str_replace(".", "", $request['besaran']);
 		$request['no_reg'] = VignereCip::encrypt($request['no_reg']);
 
@@ -446,9 +474,7 @@ class GantiRugiController extends Controller
 
 	public function approve(int $id)
 	{
-		$user = User::find(Auth::user()->id);
-
-		if (!$user->can('approve spgr')) {
+		if (!Auth::user()->can('approve spgr')) {
 			return response()->json(
 				new APIResponse(
 					false,
@@ -458,7 +484,7 @@ class GantiRugiController extends Controller
 			);
 		}
 
-		if ($user->hasRole('kades')) {
+		if (Auth::user()->hasRole('kades')) {
 			$data = [
 				'approved_at' => date('Y-m-d')
 			];
@@ -492,10 +518,7 @@ class GantiRugiController extends Controller
 
 	public function destroy(int $id)
 	{
-		$user = User::find(Auth::user()->id);
-		$data = Spgr::findOrFail($id);
-
-		if (!$user->can('delete spgr')) {
+		if (!Auth::user()->can('delete spgr')) {
 			return response()->json(
 				new APIResponse(
 					false,
@@ -504,6 +527,8 @@ class GantiRugiController extends Controller
 				403
 			);
 		}
+
+		$data = Spgr::findOrFail($id);
 
 		try {
 			$data->delete();

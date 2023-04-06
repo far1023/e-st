@@ -88,7 +88,7 @@ class SuratSituasiTanahController extends Controller
 
 					if ($user->can('approve spgr')) {
 						if (($user->hasRole('sekdes') && !$data['checked_at']) || ($user->hasRole('kades') && !$data['approved_at'] && $data['checked_at'])) {
-							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
+							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasiaaa</a>";
 						} else if ($user->hasRole('superadmin') && !$data['checked_at']) {
 							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
 						}
@@ -161,6 +161,10 @@ class SuratSituasiTanahController extends Controller
 
 	public function create()
 	{
+		if (!Auth::user()->can('add surat-situasi')) {
+			abort(403, 'Unauthorized action');
+		}
+
 		return view('back.content.formulir.formSuratSituasi', [
 			"title" => "Formulir Surat Situasi Tanah",
 			"css"	=> ['stepper', 'datepicker'],
@@ -170,6 +174,16 @@ class SuratSituasiTanahController extends Controller
 
 	public function store(Request $request)
 	{
+		if (!Auth::user()->can('add surat-situasi')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
+
 		$validator = Validator::make(
 			$request->all(),
 			[
@@ -271,6 +285,10 @@ class SuratSituasiTanahController extends Controller
 
 	public function edit()
 	{
+		if (!Auth::user()->can('edit surat-situasi')) {
+			abort(403, 'Unauthorized action');
+		}
+
 		return view('back.content.formulir.formSuratSituasi', [
 			"data" => NULL,
 			"title" => "Formulir Peta Situasi Tanah - Edit",
@@ -281,6 +299,15 @@ class SuratSituasiTanahController extends Controller
 
 	public function update(Request $request, int $id)
 	{
+		if (!Auth::user()->can('edit surat-situasi')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
 
 		$validator = Validator::make(
 			$request->all(),
@@ -385,9 +412,7 @@ class SuratSituasiTanahController extends Controller
 
 	public function approve(int $id)
 	{
-		$user = User::find(Auth::user()->id);
-
-		if (!$user->can('approve surat-situasi')) {
+		if (!Auth::user()->can('approve surat-situasi')) {
 			return response()->json(
 				new APIResponse(
 					false,
@@ -397,7 +422,7 @@ class SuratSituasiTanahController extends Controller
 			);
 		}
 
-		if ($user->hasRole('kades')) {
+		if (Auth::user()->hasRole('kades')) {
 			$data = [
 				'approved_at' => date('Y-m-d')
 			];
@@ -431,10 +456,7 @@ class SuratSituasiTanahController extends Controller
 
 	public function destroy(int $id)
 	{
-		$user = User::find(Auth::user()->id);
-		$data = SuratSituasiTanah::findOrFail($id);
-
-		if (!$user->can('delete user')) {
+		if (!Auth::user()->can('delete surat-situasi')) {
 			return response()->json(
 				new APIResponse(
 					false,
@@ -443,6 +465,8 @@ class SuratSituasiTanahController extends Controller
 				403
 			);
 		}
+
+		$data = SuratSituasiTanah::findOrFail($id);
 
 		try {
 			$data->delete();

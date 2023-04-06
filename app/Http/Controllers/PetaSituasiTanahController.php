@@ -160,6 +160,10 @@ class PetaSituasiTanahController extends Controller
 
 	public function create()
 	{
+		if (!Auth::user()->can('add peta-situasi')) {
+			abort(403, 'Unauthorized action');
+		}
+
 		$kades = User::whereHas('roles', function ($query) {
 			$query->where('name', 'kades');
 		})->first();
@@ -178,6 +182,16 @@ class PetaSituasiTanahController extends Controller
 
 	public function store(Request $request)
 	{
+		if (!Auth::user()->can('add peta-situasi')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
+
 		$validator = Validator::make(
 			$request->all(),
 			[
@@ -280,6 +294,10 @@ class PetaSituasiTanahController extends Controller
 
 	public function edit()
 	{
+		if (!Auth::user()->can('edit peta-situasi')) {
+			abort(403, 'Unauthorized action');
+		}
+
 		return view('back.content.formulir.formPetaSituasi', [
 			"data" => NULL,
 			"title" => "Formulir Peta Situasi Tanah - Edit",
@@ -290,6 +308,16 @@ class PetaSituasiTanahController extends Controller
 
 	public function update(Request $request, int $id)
 	{
+		if (!Auth::user()->can('edit peta-situasi')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
+
 		$validator = Validator::make(
 			$request->all(),
 			[
@@ -393,9 +421,7 @@ class PetaSituasiTanahController extends Controller
 
 	public function approve(int $id)
 	{
-		$user = User::find(Auth::user()->id);
-
-		if (!$user->can('approve peta-situasi')) {
+		if (!Auth::user()->can('approve peta-situasi')) {
 			return response()->json(
 				new APIResponse(
 					false,
@@ -405,7 +431,7 @@ class PetaSituasiTanahController extends Controller
 			);
 		}
 
-		if ($user->hasRole('kades')) {
+		if (!Auth::user()->hasRole('kades')) {
 			$data = [
 				'approved_at' => date('Y-m-d')
 			];
@@ -439,10 +465,7 @@ class PetaSituasiTanahController extends Controller
 
 	public function destroy(int $id)
 	{
-		$user = User::find(Auth::user()->id);
-		$data = PetaSituasiTanah::findOrFail($id);
-
-		if (!$user->can('delete peta-situasi')) {
+		if (!Auth::user()->can('delete peta-situasi')) {
 			return response()->json(
 				new APIResponse(
 					false,
@@ -451,6 +474,8 @@ class PetaSituasiTanahController extends Controller
 				403
 			);
 		}
+
+		$data = PetaSituasiTanah::findOrFail($id);
 
 		try {
 			$data->delete();

@@ -167,6 +167,10 @@ class KepemilikanTanahController extends Controller
 
 	public function create()
 	{
+		if (!Auth::user()->can('add skt')) {
+			abort(403, 'Unauthorized action');
+		}
+
 		$kades = User::whereHas('roles', function ($query) {
 			$query->where('name', 'kades');
 		})->first();
@@ -185,6 +189,16 @@ class KepemilikanTanahController extends Controller
 
 	public function store(Request $request)
 	{
+		if (!Auth::user()->can('add skt')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
+
 		$validator = Validator::make(
 			$request->all(),
 			[
@@ -295,8 +309,12 @@ class KepemilikanTanahController extends Controller
 		}
 	}
 
-	public function edit(int $id)
+	public function edit()
 	{
+		if (!Auth::user()->can('edit skt')) {
+			abort(403, 'Unauthorized action');
+		}
+
 		return view('back.content.formulir.formSkt', [
 			"data" => NULL,
 			"title" => "Formulir SKT - Edit",
@@ -307,6 +325,16 @@ class KepemilikanTanahController extends Controller
 
 	public function update(Request $request, int $id)
 	{
+		if (!Auth::user()->can('edit skt')) {
+			return response()->json(
+				new APIResponse(
+					false,
+					"access to the requested resource is forbidden"
+				),
+				403
+			);
+		}
+
 		$validator = Validator::make(
 			$request->all(),
 			[
@@ -420,9 +448,7 @@ class KepemilikanTanahController extends Controller
 
 	public function approve(int $id)
 	{
-		$user = User::find(Auth::user()->id);
-
-		if (!$user->can('approve skt')) {
+		if (!Auth::user()->can('approve skt')) {
 			return response()->json(
 				new APIResponse(
 					false,
@@ -432,7 +458,7 @@ class KepemilikanTanahController extends Controller
 			);
 		}
 
-		if ($user->hasRole('kades')) {
+		if (Auth::user()->hasRole('kades')) {
 			$data = [
 				'approved_at' => date('Y-m-d')
 			];
@@ -466,9 +492,7 @@ class KepemilikanTanahController extends Controller
 
 	public function destroy(int $id)
 	{
-		$user = User::find(Auth::user()->id);
-
-		if (!$user->can('delete skt')) {
+		if (!Auth::user()->can('delete skt')) {
 			return response()->json(
 				new APIResponse(
 					false,
