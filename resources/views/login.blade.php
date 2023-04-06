@@ -10,6 +10,7 @@
   <link href="{{ asset('template/plugins/line-awesome/css/line-awesome.min.css') }}" rel="stylesheet" />
   <link href="{{ asset('template/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}" rel="stylesheet" />
   <link href="{{ asset('template/dist/css/adminlte.min.css') }}" rel="stylesheet" />
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body class="hold-transition login-page">
@@ -54,6 +55,15 @@
             </div>
           </div>
           @error('password')
+            <small class="text-danger">
+              {{ $message }}
+            </small>
+          @enderror
+          <div class="input-group mt-3">
+            <div class="g-recaptcha" id="feedback-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY') }}">
+            </div>
+          </div>
+          @error('g-recaptcha-response')
             <small class="text-danger">
               {{ $message }}
             </small>

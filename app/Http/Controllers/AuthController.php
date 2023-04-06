@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Rules\Recaptcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,6 +15,7 @@ class AuthController extends Controller
 			[
 				'username' => ['required', 'max:255'],
 				'password' => ['required'],
+				'g-recaptcha-response' => ['required', new Recaptcha()]
 			],
 			[
 				'username.required' => ' Kolom Nama Pengguna wajib diisi',
