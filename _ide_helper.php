@@ -22016,7 +22016,7 @@ namespace  {
             class Validator extends \Illuminate\Support\Facades\Validator {}
             class View extends \Illuminate\Support\Facades\View {}
             class Vite extends \Illuminate\Support\Facades\Vite {}
-            class VignereCip extends \App\Helpers\VignereCipher {}
+            class Cipher extends \App\Helpers\Cipher {}
             class Flare extends \Spatie\LaravelIgnition\Facades\Flare {}
      
 }
