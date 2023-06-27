@@ -1,14 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TesController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GantiRugiController;
 use App\Http\Controllers\KepemilikanTanahController;
 use App\Http\Controllers\PetaSituasiTanahController;
 use App\Http\Controllers\SuratSituasiTanahController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\VignereController;
+use App\Http\Controllers\TesController;
 use App\Http\Controllers\Access\RoleController;
 use App\Http\Controllers\Access\PermissionController;
 use App\Http\Controllers\Access\RoleHasPermissionController;
@@ -23,20 +22,18 @@ Route::get('/login', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout']);
 
-Route::get('/tes', [TesController::class, 'index']);
-
 Route::group(['middleware' => ['auth']], function () {
 	Route::resource('/beranda', BerandaController::class);
 
 	Route::get('/pengguna/dttable', [UserController::class, 'dttable']);
 	Route::resource('/pengguna', UserController::class);
 
-	Route::view('/tes-vignere', 'back/content/tes/vignere', [
+	Route::view('/tes-cipher', 'back/content/tes/index', [
 		"title" => "Tes",
 		"css"	=> [],
-		"js"	=> 'tes/vignerejs'
+		"js"	=> 'tes/indexjs'
 	]);
-	Route::post('/tes-vignere/cipher', [VignereController::class, 'cipher']);
+	Route::post('/tes-cipher/run', [TesController::class, 'cipher']);
 
 	Route::prefix('formulir')->group(function () {
 		Route::get('/ganti-rugi', [GantiRugiController::class, 'create'])->name('gantiRugi.create');
