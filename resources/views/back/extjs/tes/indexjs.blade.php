@@ -14,7 +14,7 @@
       let method = $(this).data('method');
       $.ajax({
         type: "POST",
-        url: "{{ url('/tes-vignere/cipher') }}",
+        url: "{{ url('/tes-cipher/run') }}",
         data: {
           text: $('#text').val(),
           key: $('#key').val(),
