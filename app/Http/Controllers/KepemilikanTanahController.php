@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use VignereCip;
+use Cipher;
 use Carbon\Carbon;
 use App\Models\Skt;
 use App\Models\User;
+use App\Models\Mirror;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Resources\APIResponse;
@@ -14,6 +15,13 @@ use Illuminate\Support\Facades\Validator;
 
 class KepemilikanTanahController extends Controller
 {
+	private $cipher;
+
+	public function __construct()
+	{
+		$this->cipher = new Cipher([0, 1, 1, 2]);
+	}
+
 	public function data()
 	{
 		return view('back.content.data.skt', [
@@ -25,23 +33,24 @@ class KepemilikanTanahController extends Controller
 
 	public function printSheet(int $id)
 	{
-		if ($skt = Skt::find($id)->toArray()) {
-			foreach ($skt as $key => $value) {
-				if (!is_int($value)) {
-					$skt[$key] = VignereCip::decrypt($value);
+		$data = [];
+
+		if ($data = Skt::mirror()->find($id)->toArray()) {
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data') {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
-		} else {
-			$skt = [];
 		}
 
-		$data = [
-			'result' => $skt,
+		$res = [
+			'result' => $data,
 			'signed_url' => url('data/kepemilikan-tanah/' . $id . '/print-out')
 		];
 
 		return view('back.content.printSheet', [
-			"data" => $data,
+			"data" => $res,
 			"title" => "Kepemilikan Tanah",
 			"css"	=> [],
 			"js"	=> 'printSheetJs'
@@ -50,14 +59,15 @@ class KepemilikanTanahController extends Controller
 
 	public function printOut(int $id)
 	{
-		if ($data = Skt::find($id)->toArray()) {
-			foreach ($data as $key => $value) {
-				if (!is_int($value)) {
-					$data[$key] = VignereCip::decrypt($value);
+		$data = [];
+
+		if ($data = Skt::mirror()->find($id)->toArray()) {
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data') {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
-		} else {
-			$data = [];
 		}
 
 		return view('back.content.printOut.skt', [
@@ -68,12 +78,13 @@ class KepemilikanTanahController extends Controller
 
 	public function dttable()
 	{
-		$data = Skt::latest()->get()->toArray();
+		$data = Skt::mirror()->latest()->get()->toArray();
 
 		foreach ($data as $i => $value) {
-			foreach ($value as $j => $val) {
-				if (!is_int($val)) {
-					$value[$j] = VignereCip::decrypt($val);
+			$decode = json_decode($value['data'], true);
+			foreach ($value as $col => $val) {
+				if (!is_int($val) && !str_contains($col, 'ed_at') && $col != 'data') {
+					$value[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
 			$data[$i] = $value;
@@ -135,15 +146,15 @@ class KepemilikanTanahController extends Controller
 
 	public function show(int $id)
 	{
+		$data = Skt::mirror()->findOrFail($id)->toArray();
+
 		try {
-			$data = Skt::findOrFail($id)->toArray();
-			foreach ($data as $key => $value) {
-				if (!is_int($value)) {
-					$data[$key] = VignereCip::decrypt($value);
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data') {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
-
-			// dd($data);
 
 			return response()->json(
 				new APIResponse(
@@ -280,15 +291,21 @@ class KepemilikanTanahController extends Controller
 			);
 		}
 
+		$mirror_data = [];
 		foreach ($request->all() as $key => $value) {
-			$request[$key] = VignereCip::encrypt($value);
+			$encrypted = $this->cipher->encrypt($value);
+			$request[$key] = $encrypted["data"];
+			$mirror_data[$key] = $encrypted["dec"];
 		}
 
-		// var_dump($request->all());
-		// die;
-
 		try {
-			Skt::create($request->all());
+			$skt = Skt::create($request->all());
+
+			$mirror['table_on_refs'] = "skts";
+			$mirror['id_on_refs'] = $skt->id;
+			$mirror['data'] = json_encode($mirror_data);
+			Mirror::create($mirror);
+
 			return response()->json(
 				new APIResponse(
 					true,
@@ -416,16 +433,22 @@ class KepemilikanTanahController extends Controller
 			);
 		}
 
+		$mirror_data = [];
 		foreach ($request->all() as $key => $value) {
-			$request[$key] = VignereCip::encrypt($value);
+			$encrypted = $this->cipher->encrypt($value);
+			$request[$key] = $encrypted["data"];
+			$mirror_data[$key] = $encrypted["dec"];
 		}
-
-		// var_dump($request->all());
-		// die;
 
 		try {
 			$data = Skt::findOrFail($id);
 			$data->update($request->all());
+
+			$mirror['table_on_refs'] = "skts";
+			$mirror['id_on_refs'] = $id;
+			$mirror['data'] = json_encode($mirror_data);
+			Mirror::where('table_on_refs', 'skts')->where('id_on_refs', $id)->update($mirror);
+
 			return response()->json(
 				new APIResponse(
 					true,
@@ -501,9 +524,12 @@ class KepemilikanTanahController extends Controller
 			);
 		}
 
+		$data = Skt::findOrFail($id);
+
 		try {
-			$data = Skt::findOrFail($id);
 			$data->delete();
+			Mirror::where('table_on_refs', 'skts')->where('id_on_refs', $id)->delete();
+
 			return response()->json(
 				new APIResponse(
 					true,

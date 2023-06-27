@@ -2,18 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use VignereCip;
+use Cipher;
 use Carbon\Carbon;
 use App\Models\Spgr;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Resources\APIResponse;
+use App\Models\Mirror;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class GantiRugiController extends Controller
 {
+	private $cipher;
+
+	public function __construct()
+	{
+		$this->cipher = new Cipher([0, 1, 1, 2]);
+	}
+
 	public function data()
 	{
 		return view('back.content.data.spgr', [
@@ -25,23 +33,24 @@ class GantiRugiController extends Controller
 
 	public function printSheet(int $id)
 	{
-		if ($spgr = Spgr::find($id)->toArray()) {
-			foreach ($spgr as $key => $value) {
-				if (!is_int($value)) {
-					$spgr[$key] = VignereCip::decrypt($value);
+		$data = [];
+
+		if ($data = Spgr::mirror()->find($id)->toArray()) {
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data') {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
-		} else {
-			$spgr = [];
 		}
 
-		$data = [
-			'result' => $spgr,
+		$res = [
+			'result' => $data,
 			'signed_url' => url('data/ganti-rugi/' . $id . '/print-out')
 		];
 
 		return view('back.content.printSheet', [
-			"data" => $data,
+			"data" => $res,
 			"title" => "Ganti Rugi",
 			"css"	=> [],
 			"js"	=> 'printSheetJs'
@@ -50,10 +59,11 @@ class GantiRugiController extends Controller
 
 	public function printOut(int $id)
 	{
-		if ($data = Spgr::find($id)->toArray()) {
-			foreach ($data as $key => $value) {
-				if (!is_int($value)) {
-					$data[$key] = VignereCip::decrypt($value);
+		if ($data = Spgr::mirror()->find($id)->toArray()) {
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data') {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
 		} else {
@@ -68,12 +78,13 @@ class GantiRugiController extends Controller
 
 	public function dttable()
 	{
-		$data = Spgr::latest()->get()->toArray();
+		$data = Spgr::mirror()->latest()->get()->toArray();
 
 		foreach ($data as $i => $value) {
-			foreach ($value as $j => $val) {
-				if (!is_int($val)) {
-					$value[$j] = VignereCip::decrypt($val);
+			$decode = json_decode($value['data'], true);
+			foreach ($value as $col => $val) {
+				if (!is_int($val) && !str_contains($col, 'ed_at') && $col != 'data') {
+					$value[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
 			$data[$i] = $value;
@@ -135,15 +146,15 @@ class GantiRugiController extends Controller
 
 	public function show(int $id)
 	{
+		$data = Spgr::mirror()->findOrFail($id)->toArray();
+
 		try {
-			$data = Spgr::findOrFail($id)->toArray();
-			foreach ($data as $key => $value) {
-				if (!is_int($value)) {
-					$data[$key] = VignereCip::decrypt($value);
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data') {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
-
-			// dd($data);
 
 			return response()->json(
 				new APIResponse(
@@ -170,10 +181,10 @@ class GantiRugiController extends Controller
 			abort(403, 'Unauthorized action.');
 		}
 
-		$spgr = Spgr::latest()->first();
+		$spgr = Spgr::join('mirrors', '')->latest()->first();
 
-		if ($spgr && explode('/', $spgr->no_reg)[2] == date('Y')) {
-			$no_reg = intval(strtok($spgr->no_reg, '/')) + 1;
+		if ($spgr && explode('/', $this->cipher->decrypt($spgr->no_reg))[2] == date('Y')) {
+			$no_reg = intval(strtok($this->cipher->decrypt($spgr->no_reg), '/')) + 1;
 			$no_reg = $no_reg . "/SPGR/" . date('Y');
 		} else {
 			$no_reg = 1 . "/SPGR/" . date('Y');
@@ -209,7 +220,8 @@ class GantiRugiController extends Controller
 		}
 
 		$request['besaran'] = str_replace(".", "", $request['besaran']);
-		$request['no_reg'] = VignereCip::encrypt($request['no_reg']);
+		$no_reg_encrypted = $this->cipher->encrypt($request['no_reg']);
+		$request['no_reg'] = $no_reg_encrypted['data'];
 
 		$validator = Validator::make(
 			$request->all(),
@@ -296,17 +308,23 @@ class GantiRugiController extends Controller
 			);
 		}
 
-		$request['no_reg'] = VignereCip::decrypt($request['no_reg']);
+		$request['no_reg'] = $this->cipher->decrypt($no_reg_encrypted['dec']);
 
+		$mirror_data = [];
 		foreach ($request->all() as $key => $value) {
-			$request[$key] = VignereCip::encrypt($value);
+			$encrypted = $this->cipher->encrypt($value);
+			$request[$key] = $encrypted["data"];
+			$mirror_data[$key] = $encrypted["dec"];
 		}
 
-		// var_dump($request->all());
-		// die;
-
 		try {
-			Spgr::create($request->all());
+			$spgr = Spgr::create($request->all());
+
+			$mirror['table_on_refs'] = "spgrs";
+			$mirror['id_on_refs'] = $spgr->id;
+			$mirror['data'] = json_encode($mirror_data);
+			Mirror::create($mirror);
+
 			return response()->json(
 				new APIResponse(
 					true,
@@ -353,7 +371,8 @@ class GantiRugiController extends Controller
 		}
 
 		$request['besaran'] = str_replace(".", "", $request['besaran']);
-		$request['no_reg'] = VignereCip::encrypt($request['no_reg']);
+		$no_reg_encrypted = $this->cipher->encrypt($request['no_reg']);
+		$request['no_reg'] = $no_reg_encrypted['data'];
 
 		$validator = Validator::make(
 			$request->all(),
@@ -440,18 +459,24 @@ class GantiRugiController extends Controller
 			);
 		}
 
-		$request['no_reg'] = VignereCip::decrypt($request['no_reg']);
+		$request['no_reg'] = $this->cipher->decrypt($no_reg_encrypted['dec']);
 
+		$mirror_data = [];
 		foreach ($request->all() as $key => $value) {
-			$request[$key] = VignereCip::encrypt($value);
+			$encrypted = $this->cipher->encrypt($value);
+			$request[$key] = $encrypted["data"];
+			$mirror_data[$key] = $encrypted["dec"];
 		}
-
-		// var_dump($request->all());
-		// die;
 
 		try {
 			$data = Spgr::findOrFail($id);
 			$data->update($request->all());
+
+			$mirror['table_on_refs'] = "spgrs";
+			$mirror['id_on_refs'] = $id;
+			$mirror['data'] = json_encode($mirror_data);
+			Mirror::where('table_on_refs', 'spgrs')->where('id_on_refs', $id)->update($mirror);
+
 			return response()->json(
 				new APIResponse(
 					true,
@@ -531,6 +556,8 @@ class GantiRugiController extends Controller
 
 		try {
 			$data->delete();
+			Mirror::where('table_on_refs', 'spgrs')->where('id_on_refs', $id)->delete();
+
 			return response()->json(
 				new APIResponse(
 					true,

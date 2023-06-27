@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use VignereCip;
-use App\Models\User;
+use Cipher;
+use App\Models\Mirror;
 use Illuminate\Http\Request;
-use App\Models\SuratSituasiTanah;
 use Yajra\DataTables\DataTables;
+use App\Models\SuratSituasiTanah;
 use App\Http\Resources\APIResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class SuratSituasiTanahController extends Controller
 {
+	private $cipher;
+
+	public function __construct()
+	{
+		$this->cipher = new Cipher([0, 1, 1, 2]);
+	}
+
 	public function data()
 	{
 		return view('back.content.data.suratSituasi', [
@@ -24,23 +31,24 @@ class SuratSituasiTanahController extends Controller
 
 	public function printSheet(int $id)
 	{
-		if ($surat_situasi = SuratSituasiTanah::find($id)->toArray()) {
-			foreach ($surat_situasi as $key => $value) {
-				if (!is_int($value)) {
-					$surat_situasi[$key] = VignereCip::decrypt($value);
+		$data = [];
+
+		if ($data = SuratSituasiTanah::mirror()->find($id)->toArray()) {
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data' && ($col != 'sketsa' || $data['sketsa'] != NULL)) {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
-		} else {
-			$surat_situasi = [];
 		}
 
-		$data = [
-			'result' => $surat_situasi,
+		$res = [
+			'result' => $data,
 			'signed_url' => url('data/surat-situasi-tanah/' . $id . '/print-out')
 		];
 
 		return view('back.content.printSheet', [
-			"data" => $data,
+			"data" => $res,
 			"title" => "Surat Situasi Tanah",
 			"css"	=> [],
 			"js"	=> 'printSheetJs'
@@ -49,14 +57,15 @@ class SuratSituasiTanahController extends Controller
 
 	public function printOut(int $id)
 	{
-		if ($data = SuratSituasiTanah::find($id)->toArray()) {
-			foreach ($data as $key => $value) {
-				if (!is_int($value)) {
-					$data[$key] = VignereCip::decrypt($value);
+		$data = [];
+
+		if ($data = SuratSituasiTanah::mirror()->find($id)->toArray()) {
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data' && ($col != 'sketsa' || $data['sketsa'] != NULL)) {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
-		} else {
-			$data = [];
 		}
 
 		return view('back.content.printOut.suratSituasi', [
@@ -67,13 +76,13 @@ class SuratSituasiTanahController extends Controller
 
 	public function dttable()
 	{
-		// $data = User::with('roles')->where('id', '!=', 1);
-		$data = SuratSituasiTanah::latest()->get()->toArray();
+		$data = SuratSituasiTanah::mirror()->latest()->get()->toArray();
 
 		foreach ($data as $i => $value) {
-			foreach ($value as $j => $val) {
-				if (!is_int($val)) {
-					$value[$j] = VignereCip::decrypt($val);
+			$decode = json_decode($value['data'], true);
+			foreach ($value as $col => $val) {
+				if (!is_int($val) && !str_contains($col, 'ed_at') && $col != 'data' && ($col != 'sketsa' || $value['sketsa'] != NULL)) {
+					$value[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
 			$data[$i] = $value;
@@ -84,7 +93,7 @@ class SuratSituasiTanahController extends Controller
 				if (Auth::user()) {
 					$aksi = "<div class='text-right'>";
 
-					if (Auth::user()->can('approve spgr')) {
+					if (Auth::user()->can('approve surat-situasi')) {
 						if ((Auth::user()->hasRole('sekdes') && !$data['checked_at']) || (Auth::user()->hasRole('kades') && !$data['approved_at'] && $data['checked_at'])) {
 							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasiaaa</a>";
 						} else if (Auth::user()->hasRole('superadmin') && !$data['checked_at']) {
@@ -96,12 +105,12 @@ class SuratSituasiTanahController extends Controller
 							$aksi .= "<a href='javascript:void(0)' data-url='" . url('data/surat-situasi-tanah/' . $data['id'] . '/print-out') . "' class='btn btn-sm btn-success mb-1 mr-1 cetak' title='Cetak surat'>Cetak</a>";
 						}
 					} else {
-						if (Auth::user()->can('edit spgr')) {
+						if (Auth::user()->can('edit surat-situasi')) {
 							$aksi .= "<a href='" . url('formulir/surat-situasi-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 mr-1 edit' title='Edit data'>Edit</a>";
 						}
 					}
 					$aksi .= "<a href='" . url('data/surat-situasi-tanah/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1' title='Lihat surat'>Cek</a>";
-					if (Auth::user()->can('delete spgr')) {
+					if (Auth::user()->can('delete surat-situasi')) {
 						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class=' las la-times'></i></a>";
 					}
 
@@ -131,10 +140,12 @@ class SuratSituasiTanahController extends Controller
 	public function show(int $id)
 	{
 		try {
-			$data = SuratSituasiTanah::findOrFail($id)->toArray();
-			foreach ($data as $key => $value) {
-				if (!is_int($value)) {
-					$data[$key] = VignereCip::decrypt($value);
+			$data = SuratSituasiTanah::mirror()->findOrFail($id)->toArray();
+
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data' && ($col != 'sketsa' || $data['sketsa'] != NULL)) {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
 
@@ -229,9 +240,12 @@ class SuratSituasiTanahController extends Controller
 			);
 		}
 
+		$mirror_data = [];
 		foreach ($request->all() as $key => $value) {
 			if ($key != 'sketsa') {
-				$request[$key] = VignereCip::encrypt($value);
+				$encrypted = $this->cipher->encrypt($value);
+				$request[$key] = $encrypted["data"];
+				$mirror_data[$key] = $encrypted["dec"];
 			}
 		}
 
@@ -254,14 +268,22 @@ class SuratSituasiTanahController extends Controller
 		];
 
 		if ($request->file()) {
-			$fileName = time() . '_surat_situasi.' . $request->sketsa->extension();
+			$fileName = time() . '_surat.' . $request->sketsa->extension();
 			$filePath = $request->file('sketsa')->storeAs('images/sketsa', $fileName);
 
-			$data['sketsa'] = VignereCip::encrypt($filePath);
+			$encrypted = $this->cipher->encrypt($filePath);
+			$data['sketsa'] = $encrypted["data"];
+			$mirror_data['sketsa'] = $encrypted["dec"];
 		}
 
 		try {
-			SuratSituasiTanah::create($data);
+			$surat_situasi = SuratSituasiTanah::create($data);
+
+			$mirror['table_on_refs'] = "surat_situasi_tanahs";
+			$mirror['id_on_refs'] = $surat_situasi->id;
+			$mirror['data'] = json_encode($mirror_data);
+			Mirror::create($mirror);
+
 			return response()->json(
 				new APIResponse(
 					true,
@@ -352,12 +374,12 @@ class SuratSituasiTanahController extends Controller
 			);
 		}
 
+		$mirror_data = [];
 		foreach ($request->all() as $key => $value) {
-
-			foreach ($request->all() as $key => $value) {
-				if ($key != 'sketsa') {
-					$request[$key] = VignereCip::encrypt($value);
-				}
+			if ($key != 'sketsa') {
+				$encrypted = $this->cipher->encrypt($value);
+				$request[$key] = $encrypted["data"];
+				$mirror_data[$key] = $encrypted["dec"];
 			}
 		}
 
@@ -380,15 +402,23 @@ class SuratSituasiTanahController extends Controller
 		];
 
 		if ($request->file()) {
-			$fileName = time() . '_surat_situasi.' . $request->sketsa->extension();
+			$fileName = time() . '_surat.' . $request->sketsa->extension();
 			$filePath = $request->file('sketsa')->storeAs('images/sketsa', $fileName);
 
-			$data['sketsa'] = VignereCip::encrypt($filePath);
+			$encrypted = $this->cipher->encrypt($filePath);
+			$data['sketsa'] = $encrypted["data"];
+			$mirror_data['sketsa'] = $encrypted["dec"];
 		}
 
 		try {
-			$data = SuratSituasiTanah::findOrFail($id);
-			$data->update($data);
+			$surat = SuratSituasiTanah::findOrFail($id);
+			$surat->update($data);
+
+			$mirror['table_on_refs'] = "surat_situasi_tanahs";
+			$mirror['id_on_refs'] = $id;
+			$mirror['data'] = json_encode($mirror_data);
+			Mirror::where('table_on_refs', 'surat_situasi_tanahs')->where('id_on_refs', $id)->update($mirror);
+
 			return response()->json(
 				new APIResponse(
 					true,
@@ -468,6 +498,8 @@ class SuratSituasiTanahController extends Controller
 
 		try {
 			$data->delete();
+			Mirror::where('table_on_refs', 'surat_situasi_tanahs')->where('id_on_refs', $id)->delete();
+
 			return response()->json(
 				new APIResponse(
 					true,

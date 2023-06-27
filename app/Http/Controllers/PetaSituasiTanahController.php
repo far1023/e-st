@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use VignereCip;
+use Cipher;
 use App\Models\User;
+use App\Models\Mirror;
 use Illuminate\Http\Request;
 use App\Models\PetaSituasiTanah;
 use Yajra\DataTables\DataTables;
@@ -13,6 +14,13 @@ use Illuminate\Support\Facades\Validator;
 
 class PetaSituasiTanahController extends Controller
 {
+	private $cipher;
+
+	public function __construct()
+	{
+		$this->cipher = new Cipher([0, 1, 1, 2]);
+	}
+
 	public function data()
 	{
 		return view('back.content.data.petaSituasi', [
@@ -24,23 +32,24 @@ class PetaSituasiTanahController extends Controller
 
 	public function printSheet(int $id)
 	{
-		if ($peta_situasi = PetaSituasiTanah::find($id)->toArray()) {
-			foreach ($peta_situasi as $key => $value) {
-				if (!is_int($value)) {
-					$peta_situasi[$key] = VignereCip::decrypt($value);
+		$data = [];
+
+		if ($data = PetaSituasiTanah::mirror()->find($id)->toArray()) {
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data' && ($col != 'sketsa' || $data['sketsa'] != NULL)) {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
-		} else {
-			$peta_situasi = [];
 		}
 
-		$data = [
-			'result' => $peta_situasi,
+		$res = [
+			'result' => $data,
 			'signed_url' => url('data/peta-situasi-tanah/' . $id . '/print-out')
 		];
 
 		return view('back.content.printSheet', [
-			"data" => $data,
+			"data" => $res,
 			"title" => "Peta Situasi Tanah",
 			"css"	=> [],
 			"js"	=> 'printSheetJs'
@@ -49,14 +58,15 @@ class PetaSituasiTanahController extends Controller
 
 	public function printOut(int $id)
 	{
-		if ($data = PetaSituasiTanah::find($id)->toArray()) {
-			foreach ($data as $key => $value) {
-				if (!is_int($value)) {
-					$data[$key] = VignereCip::decrypt($value);
+		$data = [];
+
+		if ($data = PetaSituasiTanah::mirror()->find($id)->toArray()) {
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data' && ($col != 'sketsa' || $data['sketsa'] != NULL)) {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
-		} else {
-			$data = [];
 		}
 
 		return view('back.content.printOut.petaSituasi', [
@@ -67,12 +77,13 @@ class PetaSituasiTanahController extends Controller
 
 	public function dttable()
 	{
-		$data = PetaSituasiTanah::latest()->get()->toArray();
+		$data = PetaSituasiTanah::mirror()->latest()->get()->toArray();
 
 		foreach ($data as $i => $value) {
-			foreach ($value as $j => $val) {
-				if (!is_int($val)) {
-					$value[$j] = VignereCip::decrypt($val);
+			$decode = json_decode($value['data'], true);
+			foreach ($value as $col => $val) {
+				if (!is_int($val) && !str_contains($col, 'ed_at') && $col != 'data' && ($col != 'sketsa' || $value['sketsa'] != NULL)) {
+					$value[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
 			$data[$i] = $value;
@@ -83,7 +94,7 @@ class PetaSituasiTanahController extends Controller
 				if (Auth::user()) {
 					$aksi = "<div class='text-right'>";
 
-					if (Auth::user()->can('approve spgr')) {
+					if (Auth::user()->can('approve peta-situasi')) {
 						if ((Auth::user()->hasRole('sekdes') && !$data['checked_at']) || (Auth::user()->hasRole('kades') && !$data['approved_at'] && $data['checked_at'])) {
 							$aksi .= "<a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-success mb-1 mr-1 approve' title='Verifikasi permohonan'>Verifikasi</a>";
 						} else if (Auth::user()->hasRole('superadmin') && !$data['checked_at']) {
@@ -95,12 +106,12 @@ class PetaSituasiTanahController extends Controller
 							$aksi .= "<a href='javascript:void(0)' data-url='" . url('data/peta-situasi-tanah/' . $data['id'] . '/print-out') . "' class='btn btn-sm btn-success mb-1 mr-1 cetak' title='Cetak surat'>Cetak</a>";
 						}
 					} else {
-						if (Auth::user()->can('edit spgr')) {
+						if (Auth::user()->can('edit peta-situasi')) {
 							$aksi .= "<a href='" . url('formulir/peta-situasi-tanah/' . $data['id'] . '/edit') . "' class='btn btn-sm btn-secondary mb-1 mr-1 edit' title='Edit data'>Edit</a>";
 						}
 					}
 					$aksi .= "<a href='" . url('data/peta-situasi-tanah/' . $data['id'] . '/cek') . "' class='btn btn-sm btn-primary mb-1' title='Lihat surat'>Cek</a>";
-					if (Auth::user()->can('delete spgr')) {
+					if (Auth::user()->can('delete peta-situasi')) {
 						$aksi .= " <a href='javascript:void(0)' data-id='" . $data['id'] . "' class='btn btn-sm btn-danger mb-1 hapus' title='Hapus data'><i class=' las la-times'></i></a>";
 					}
 
@@ -129,11 +140,13 @@ class PetaSituasiTanahController extends Controller
 
 	public function show(int $id)
 	{
+		$data = PetaSituasiTanah::mirror()->findOrFail($id)->toArray();
+
 		try {
-			$data = PetaSituasiTanah::findOrFail($id)->toArray();
-			foreach ($data as $key => $value) {
-				if (!is_int($value)) {
-					$data[$key] = VignereCip::decrypt($value);
+			$decode = json_decode($data['data'], true);
+			foreach ($data as $col => $value) {
+				if (!is_int($value) && !str_contains($col, 'ed_at') && $col != 'data' && ($col != 'sketsa' || $data['sketsa'] != NULL)) {
+					$data[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
 
@@ -237,9 +250,12 @@ class PetaSituasiTanahController extends Controller
 			);
 		}
 
+		$mirror_data = [];
 		foreach ($request->all() as $key => $value) {
 			if ($key != 'sketsa') {
-				$request[$key] = VignereCip::encrypt($value);
+				$encrypted = $this->cipher->encrypt($value);
+				$request[$key] = $encrypted["data"];
+				$mirror_data[$key] = $encrypted["dec"];
 			}
 		}
 
@@ -263,14 +279,22 @@ class PetaSituasiTanahController extends Controller
 		];
 
 		if ($request->file()) {
-			$fileName = time() . '_peta_situasi.' . $request->sketsa->extension();
+			$fileName = time() . '_peta.' . $request->sketsa->extension();
 			$filePath = $request->file('sketsa')->storeAs('images/sketsa', $fileName);
 
-			$data['sketsa'] = VignereCip::encrypt($filePath);
+			$encrypted = $this->cipher->encrypt($filePath);
+			$data['sketsa'] = $encrypted["data"];
+			$mirror_data['sketsa'] = $encrypted["dec"];
 		}
 
 		try {
-			PetaSituasiTanah::create($data);
+			$peta_situasi = PetaSituasiTanah::create($data);
+
+			$mirror['table_on_refs'] = "peta_situasi_tanahs";
+			$mirror['id_on_refs'] = $peta_situasi->id;
+			$mirror['data'] = json_encode($mirror_data);
+			Mirror::create($mirror);
+
 			return response()->json(
 				new APIResponse(
 					true,
@@ -363,9 +387,12 @@ class PetaSituasiTanahController extends Controller
 			);
 		}
 
+		$mirror_data = [];
 		foreach ($request->all() as $key => $value) {
 			if ($key != 'sketsa') {
-				$request[$key] = VignereCip::encrypt($value);
+				$encrypted = $this->cipher->encrypt($value);
+				$request[$key] = $encrypted["data"];
+				$mirror_data[$key] = $encrypted["dec"];
 			}
 		}
 
@@ -389,15 +416,23 @@ class PetaSituasiTanahController extends Controller
 		];
 
 		if ($request->file()) {
-			$fileName = time() . '_peta_situasi.' . $request->sketsa->extension();
+			$fileName = time() . '_peta.' . $request->sketsa->extension();
 			$filePath = $request->file('sketsa')->storeAs('images/sketsa', $fileName);
 
-			$data['sketsa'] = VignereCip::encrypt($filePath);
+			$encrypted = $this->cipher->encrypt($filePath);
+			$data['sketsa'] = $encrypted["data"];
+			$mirror_data['sketsa'] = $encrypted["dec"];
 		}
 
 		try {
 			$data = PetaSituasiTanah::findOrFail($id);
 			$data->update($request->all());
+
+			$mirror['table_on_refs'] = "peta_situasi_tanahs";
+			$mirror['id_on_refs'] = $id;
+			$mirror['data'] = json_encode($mirror_data);
+			Mirror::where('table_on_refs', 'peta_situasi_tanahs')->where('id_on_refs', $id)->update($mirror);
+
 			return response()->json(
 				new APIResponse(
 					true,
@@ -477,6 +512,8 @@ class PetaSituasiTanahController extends Controller
 
 		try {
 			$data->delete();
+			Mirror::where('table_on_refs', 'peta_situasi_tanahs')->where('id_on_refs', $id)->delete();
+
 			return response()->json(
 				new APIResponse(
 					true,
