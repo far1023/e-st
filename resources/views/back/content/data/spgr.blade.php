@@ -25,10 +25,11 @@
             <thead class="text-xs text-gray">
               <tr>
                 <th>#</th>
-                <th>No.Reg</th>
                 <th>NIK</th>
+                <th>No.Reg</th>
                 <th>Pihak Pertama</th>
-                <th>TTL</th>
+                <th>Pihak Kedua</th>
+                <th>Alamat</th>
                 <th>Status</th>
                 <th></th>
               </tr>

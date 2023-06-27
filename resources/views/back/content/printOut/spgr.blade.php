@@ -102,7 +102,7 @@
 </table>
 <p>Selanjutnya <b>PIHAK KEDUA</b> yang membayar uang ganti kerugian.</p>
 <p><b>PIHAK PERTAMA</b> menyatakan dengan sesungguhnya dengan akal dan pikiran yang sehat serta tidak dipengaruhi oleh siapapun juga telah menerima uang kontan sebesar
-  Rp<b>{{ number_format($data['besaran'], 0, ',', '.') }},- ( {{ $data['terbilang'] }} )</b>.</p>
+  Rp<b>{{ number_format((int) $data['besaran'], 0, ',', '.') }},- ( {{ $data['terbilang'] }} )</b>.</p>
 <p>Sebagai pengganti kerugian atas sebidang tanah seluas &pm; <b>{{ $data['luas_tanah'] }} m&sup2;</b> usaha/garapan <b>PIHAK PERTAMA</b> jumlah tersebut telah
   diterima oleh <b>PIHAK PERTAMA</b> dan surat pernyataan ganti rugi ini berlaku pula sebagai kwitansi tanda penerimaannya serta menyerahkan tanah usaha/garapan
   tersebut dalam keadaan tidak dihuni atau digarap oleh siapapun, oleh <b>PIHAK PERTAMA</b> kepada <b>PIHAK KEDUA</b>.</p>

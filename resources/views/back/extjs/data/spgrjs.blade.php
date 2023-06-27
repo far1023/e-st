@@ -103,20 +103,24 @@
           name: 'DT_RowIndex'
         },
         {
-          data: 'no_reg',
-          name: 'no_reg'
-        },
-        {
           data: 'ktp_pihak_pertama',
           name: 'ktp_pihak_pertama'
+        },
+        {
+          data: 'no_reg',
+          name: 'no_reg'
         },
         {
           data: 'nama_pihak_pertama',
           name: 'nama_pihak_pertama'
         },
         {
-          data: 'ttl',
-          name: 'ttl'
+          data: 'nama_pihak_kedua',
+          name: 'nama_pihak_kedua'
+        },
+        {
+          data: 'alamat_pihak_pertama',
+          name: 'alamat_pihak_pertama'
         },
         {
           data: 'status',
