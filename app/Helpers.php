@@ -72,10 +72,13 @@ class Cipher
 		}
 	}
 
-	public function encrypt(string $plainText)
+	public function encrypt(string $plainText = NULL)
 	{
 		if ($plainText == NULL) {
-			return NULL;
+			return array(
+				"data" => NULL,
+				"dec" => NULL
+			);
 		}
 
 		for ($i = 0; $i < strlen($plainText); $i++) {
@@ -108,7 +111,7 @@ class Cipher
 		);
 	}
 
-	public function decrypt(string $encryptedText)
+	public function decrypt(string $encryptedText = NULL)
 	{
 		if ($encryptedText == NULL) {
 			return NULL;
