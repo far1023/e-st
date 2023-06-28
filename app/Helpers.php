@@ -139,10 +139,10 @@ class Cipher
 
 			// $decryptedText[] = $resultMatrix[0][0];
 			// $decryptedText[] = $resultMatrix[1][0];
-			$decryptedText .= trim(chr($resultMatrix[0][0])) . trim(chr($resultMatrix[1][0]));
+			$decryptedText .= chr($resultMatrix[0][0]) . chr($resultMatrix[1][0]);
 		};
 
-		return mb_convert_encoding($decryptedText, 'UTF-8', mb_detect_encoding($decryptedText, "UTF-8, ISO-8859-1, ISO-8859-15", true));
+		return trim(mb_convert_encoding($decryptedText, 'UTF-8', mb_detect_encoding($decryptedText, "UTF-8, ISO-8859-1, ISO-8859-15", true)));
 	}
 
 	public static function encryptVig($text, $key = NULL)
