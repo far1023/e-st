@@ -374,7 +374,9 @@ class SuratSituasiTanahController extends Controller
 			);
 		}
 
-		$mirror_data = [];
+		$mirror = Mirror::where('table_on_refs', 'surat_situasi_tanahs')->where('id_on_refs', $id)->first()->toArray();
+		unset($mirror['created_at'], $mirror['updated_at']);
+		$mirror_data = json_decode($mirror['data'], true);
 		foreach ($request->all() as $key => $value) {
 			if ($key != 'sketsa') {
 				$encrypted = $this->cipher->encrypt($value);

@@ -461,7 +461,9 @@ class GantiRugiController extends Controller
 
 		$request['no_reg'] = $this->cipher->decrypt($no_reg_encrypted['dec']);
 
-		$mirror_data = [];
+		$mirror = Mirror::where('table_on_refs', 'spgrs')->where('id_on_refs', $id)->first()->toArray();
+		unset($mirror['created_at'], $mirror['updated_at']);
+		$mirror_data = json_decode($mirror['data'], true);
 		foreach ($request->all() as $key => $value) {
 			$encrypted = $this->cipher->encrypt($value);
 			$request[$key] = $encrypted["data"];
