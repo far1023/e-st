@@ -83,7 +83,7 @@ class GantiRugiController extends Controller
 		foreach ($data as $i => $value) {
 			$decode = json_decode($value['data'], true);
 			foreach ($value as $col => $val) {
-				if (!is_int($val) && !str_contains($col, 'ed_at') && $col != 'data') {
+				if (!is_int($val) && !str_contains($col, 'ed_at') && $col != 'data' && $val) {
 					$value[$col] = $this->cipher->decrypt($decode[$col]);
 				}
 			}
@@ -181,10 +181,12 @@ class GantiRugiController extends Controller
 			abort(403, 'Unauthorized action.');
 		}
 
-		$spgr = Spgr::join('mirrors', '')->latest()->first();
+		$spgr = Spgr::mirror()->latest()->first();
+		$mirror_data = json_decode($spgr->data, true);
+		$no_reg = $this->cipher->decrypt($mirror_data['no_reg']);
 
-		if ($spgr && explode('/', $this->cipher->decrypt($spgr->no_reg))[2] == date('Y')) {
-			$no_reg = intval(strtok($this->cipher->decrypt($spgr->no_reg), '/')) + 1;
+		if ($spgr && explode('/', $no_reg)[2] == date('Y')) {
+			$no_reg = intval(strtok($no_reg, '/')) + 1;
 			$no_reg = $no_reg . "/SPGR/" . date('Y');
 		} else {
 			$no_reg = 1 . "/SPGR/" . date('Y');
@@ -226,7 +228,7 @@ class GantiRugiController extends Controller
 		$validator = Validator::make(
 			$request->all(),
 			[
-				"no_reg" => ["required", "unique:spgrs"],
+				"no_reg" => ["required"],
 				"tanggal_reg" => ["required", "date"],
 				"tanggal_ref" => ["nullable", "date"],
 				"nama_pihak_pertama" => ["required"],
@@ -257,7 +259,6 @@ class GantiRugiController extends Controller
 			],
 			[
 				"no_reg.required" => "wajib diisi",
-				"no_reg.unique" => "nomor regis sudah terdaftar",
 				"tanggal_reg.required" => "wajib diisi",
 				"tanggal_reg.date" => "format tanggal tidak cocok",
 				"tanggal_ref.date" => "format tanggal tidak cocok",
@@ -377,7 +378,7 @@ class GantiRugiController extends Controller
 		$validator = Validator::make(
 			$request->all(),
 			[
-				"no_reg" => ["required", "unique:spgrs,no_reg," . $id],
+				"no_reg" => ["required"],
 				"tanggal_reg" => ["required", "date"],
 				"tanggal_ref" => ["nullable", "date"],
 				"nama_pihak_pertama" => ["required"],
@@ -408,7 +409,6 @@ class GantiRugiController extends Controller
 			],
 			[
 				"no_reg.required" => "wajib diisi",
-				"no_reg.unique" => "nomor regis sudah terdaftar",
 				"tanggal_reg.required" => "wajib diisi",
 				"tanggal_reg.date" => "format tanggal tidak cocok",
 				"tanggal_ref.date" => "format tanggal tidak cocok",
