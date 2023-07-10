@@ -27,7 +27,7 @@
               <span class="info-box-text">Pernyataan Ganti Rugi</span>
               <h4 class="info-box-number">{{ $all['spgr'] }}</h4>
               <div class="progress bg-info">
-                <div class="progress-bar" style="width: {{ ($need_approval['spgr'] / $all['spgr']) * 100 }}%; background-color: #D0D0D0"></div>
+                <div class="progress-bar" style="width: {{ $all['spgr'] > 0 ? ($need_approval['spgr'] / $all['spgr']) * 100 : 0 }}%; background-color: #D0D0D0"></div>
               </div>
               <span class="progress-description">
                 @if ($need_approval['spgr'] > 0)
@@ -47,7 +47,7 @@
               <span class="info-box-text">Surat Kepemilikan Tanah</span>
               <h4 class="info-box-number">{{ $all['skt'] }}</h4>
               <div class="progress bg-info">
-                <div class="progress-bar" style="width: {{ ($need_approval['skt'] / $all['skt']) * 100 }}%; background-color: #D0D0D0"></div>
+                <div class="progress-bar" style="width: {{ $all['skt'] > 0 ? ($need_approval['skt'] / $all['skt']) * 100 : 0 }}%; background-color: #D0D0D0"></div>
               </div>
               <span class="progress-description">
                 @if ($need_approval['skt'] > 0)
@@ -67,7 +67,8 @@
               <span class="info-box-text">Peta Situasi Tanah</span>
               <h4 class="info-box-number">{{ $all['peta_situasi'] }}</h4>
               <div class="progress bg-info">
-                <div class="progress-bar" style="width: {{ ($need_approval['peta_situasi'] / $all['peta_situasi']) * 100 }}%;background-color: #D0D0D0"></div>
+                <div class="progress-bar"
+                  style="width: {{ $all['peta_situasi'] > 0 ? ($need_approval['peta_situasi'] / $all['peta_situasi']) * 100 : 0 }}%; background-color: #D0D0D0"></div>
               </div>
               <span class="progress-description">
                 @if ($need_approval['peta_situasi'] > 0)
@@ -87,7 +88,8 @@
               <span class="info-box-text">Surat Situasi Tanah</span>
               <h4 class="info-box-number">{{ $all['surat_situasi'] }}</h4>
               <div class="progress bg-info">
-                <div class="progress-bar" style="width: {{ ($need_approval['surat_situasi'] / $all['surat_situasi']) * 100 }}%;background-color: #D0D0D0"></div>
+                <div class="progress-bar"
+                  style="width: {{ $all['surat_situasi'] > 0 ? ($need_approval['surat_situasi'] / $all['surat_situasi']) * 100 : 0 }}%; background-color: #D0D0D0"></div>
               </div>
               <span class="progress-description">
                 @if ($need_approval['surat_situasi'] > 0)
