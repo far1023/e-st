@@ -182,12 +182,15 @@ class GantiRugiController extends Controller
 		}
 
 		$spgr = Spgr::mirror()->latest()->first();
-		$mirror_data = json_decode($spgr->data, true);
-		$no_reg = $this->cipher->decrypt($mirror_data['no_reg']);
 
-		if ($spgr && explode('/', $no_reg)[2] == date('Y')) {
-			$no_reg = intval(strtok($no_reg, '/')) + 1;
-			$no_reg = $no_reg . "/SPGR/" . date('Y');
+		if ($spgr) {
+			$mirror_data = json_decode($spgr->data, true);
+			$no_reg = $this->cipher->decrypt($mirror_data['no_reg']);
+
+			if (explode('/', $no_reg)[2] == date('Y')) {
+				$no_reg = intval(strtok($no_reg, '/')) + 1;
+				$no_reg = $no_reg . "/SPGR/" . date('Y');
+			}
 		} else {
 			$no_reg = 1 . "/SPGR/" . date('Y');
 		}
